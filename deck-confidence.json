@@ -2057,6 +2057,25 @@
         "invariantBreaches": 0,
         "regressions": 0
       }
+    },
+    "Reign of Dragons [FDC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-04",
+      "notes": "CERTIFIED 2026-11-04: all 5 gates PASS (Gates 1-4, review rounds 1-2, Gate 2 clear, Gate 5 3x10 clean at seeds 20261204/14/24). Evidence: tools/differential-scenarios/reign-of-dragons-fdc/CERT_EVIDENCE.md.",
+      "headless": {
+        "lastRun": "2026-11-04",
+        "masterSeed": 20261244,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.6302521008403361,
+        "cardsCovered": 27,
+        "cardsTotal": 69,
+        "effectsVerified": 372,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     }
   }
 }
