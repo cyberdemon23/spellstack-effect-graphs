@@ -2114,6 +2114,25 @@
         "invariantBreaches": 0,
         "regressions": 0
       }
+    },
+    "Tramplesaurus Rex [FDC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-04",
+      "notes": "CERTIFIED 2026-11-04: all 5 gates PASS (Gates 1-4, review, Gate 2 clear, Gate 5 clean). Evidence: tools/differential-scenarios/tramplesaurus-rex-fdc/CERT_EVIDENCE.md.",
+      "headless": {
+        "lastRun": "2026-11-04",
+        "masterSeed": 20261350,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.6605504587155964,
+        "cardsCovered": 33,
+        "cardsTotal": 69,
+        "effectsVerified": 460,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     }
   }
 }
