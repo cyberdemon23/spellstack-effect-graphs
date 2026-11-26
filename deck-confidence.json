@@ -7,14 +7,14 @@
       "updated": "2026-09-16",
       "notes": "CERTIFIED 2026-07-15: full 5-gate cert (Gate 1/1.5/1.5b/2/3/4/5 all PASS). 76 cards (47 CLI-converted, 29 hand-authored) across 118 differential scenarios (positive+negative polarity per SCENARIO_COVERAGE_DOCTRINE). Gate 1: 118 scenarios, 0 fail, 5 legitimate skips (1 forge_runner_gap, 4 harness_adapter_gap, all backed by direct unit tests, none describing an unresolved SpellStack engine gap). A large number of real engine/mapper bugs found and fixed during hand-authoring + scenario-authoring: corpus-wide 'Lieutenant' commander-control intervening-if mapping was silently dropped by the mapper (affects Loyal Guardian, Siege-Gang Lieutenant, 5+ more cards); Fleecemane Lion's monstrous-conditional keyword grant applied unconditionally (Affected$ Card.Self+IsMonstrous suffix never consumed); Scourglass filter mapping dropped nonArtifact + was unactivatable in its own legal Upkeep window (new ActivationConditionType.RequiredPhase); Kimoyo Beads' 'choose one that hasn't been chosen' modal exclusion was missing from the interactive path; Hammer of Nazahn auto-attach always attached itself instead of the entering Equipment; token keyword leak from wrong DB-registry tiebreak match; Mind's Eye CardDrawn opponent-condition silently no-op'd; non-combat damage bypassed the replacement-effect engine entirely (Panther Habit fix, plus a resulting GetParameterValue null-safety fix); EffectGraphTargetingService never propagated SubtypeFilter at the top-level extraction loop (Loyal Retainers reanimating any creature, ignoring Legendary); DamageTargetResolver misclassified TriggeredCard as a player-targeting scope (Storm's reflexive damage landing on the player instead of the attacker); ResolveWatchedCard never unwrapped JsonElement for delayed-trigger watchBinding (Fight for the Throne watching the wrong creature); ExecuteDelayedContinuationNodes was missing its NodeConditions gate; RetargetForCopy had no GraveyardTarget case (Ancestral Communion's copy fizzling the original). Gate 1.5: commander smoke test 42/42 pass, 0 skip (FaceCommander behavioral assertion: T'Challa's ETB Vibranium-token creation, battlefield-count delta + indestructible + tapped asserted); 6 cards manually added to the generated smoke-test list whose scenario filenames use shorter slugs than their canonical slugs. Gate 1.5b: all 13 complexity-flagged cards specialist-verified PASS, including confirmation the Lieutenant fix landed correctly on Loyal Guardian. Gate 2: 0 open issues reference any deck card (7 substring false positives checked and cleared). Gate 3: 118 scenarios, 0 fails, 5 legitimate skips (see Gate 1). Gate 5: 30 games (fillers Doom Prevails, Avengers Assemble, The Fantastic Four), 0 errors, 0 invariant breaches, 0 regressions; the batch's only failing card (Martial Coup, MSC #138) is the pre-existing allowlisted minSpellX&lt;5 Bucket-4 no-op (CardVerificationHistory keys by card name, already covers this printing). First Gate 5 attempt errored on all 30 games due to a deck-file bug (bare 'Forest'/'Plains' basics lines with no |SET|NUM suffix parsed to 99/100 cards, failing IsDeckSizeValid) -- fixed and re-run clean. GATE-5 REFRESH 2026-09-16 (GH #8208, not a fresh full cert -- gates 1-4 were NOT re-run): the recorded headless block carried 110 CardInTwoZones invariant breaches, which capped the deck's DISPLAYED score at 5/10 via DeckConfidenceService.Blend's CapInvariantBreach. Root-caused to a real engine bug, not a data staleness: BounceEffect's multiTargetBounce branch acted on a target that had already left the battlefield (a trigger resolving earlier in the same DrainStack had bounced it), so FindPlayerWithPermanent returned null, destinationPlayer was null, and the move fell through to ZoneManager.MoveCard's hardcoded playerId=1 -- putting Shuri, the Black Panther into ANOTHER deck's hand while it was still in its owner's hand. Reproduced deterministically at --games 1 --seed 8028 with the group {Fae Dominion, Wakanda Forever, The Fantastic Four, Doom Prevails}; all 110 breaches came from that ONE event re-reporting at every subsequent phase boundary of game 28. Fixed by a single CR 608.2b presence guard inside BounceEffect.BounceOnePermanent (covers all five of its call sites, three of which were unguarded) plus the same guard on BlinkEffect's identical hardcoded-playerId=1 sink; pinned by SpellStack.Tests/Systems/BounceStaleBattlefieldTargetGuardRegressionTests.cs (8 tests, all mutation-verified). Post-fix: two independent 30-game batteries at seed 8001 -- the exact repro group, and this deck's own cert group {Wakanda Forever, Doom Prevails, Avengers Assemble, The Fantastic Four} -- both 0 invariant breaches / 0 effects failed / 0 regressions for this deck.",
       "headless": {
-        "lastRun": "2026-10-09",
-        "masterSeed": 20261009,
+        "lastRun": "2026-11-13",
+        "masterSeed": 20261202,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.6115107913669064,
+        "bucketCoverage": 0.6187050359712231,
         "cardsCovered": 28,
         "cardsTotal": 78,
-        "effectsVerified": 737,
+        "effectsVerified": 777,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -255,14 +255,14 @@
       "updated": "2026-06-16",
       "notes": "TIER CORRECTED 2026-07-12: label was 'l3-clean' but notes confirm this deck actually completed all 5 gates (cross-verified against the dedicated certification campaign note) — relabeled 'certified', score unchanged. | 255/0/1 pass/fail/skip. Engine fixes: EffectGraphLoader.SetSourceCardName copies all fields (Vigor replacement); DestroyEffect skips targetPermanents path when destroyTarget set (Dimension X Pizzasaur); Tokka canonical MaxResolutionsPerTurn=1. Harness: optional-target pass-check + harness_adapter_gap flag. 8 scenarios unflagged: fast_forward.2/3, exploding_barrel.1/2/4/5, dimension_x_pizzasaur.3, tokka_rahzar_unsupervised.3, vigor.4. 1 genuine Forge gap remains (roadkill_rodney.2).",
       "headless": {
-        "lastRun": "2026-09-17",
-        "masterSeed": 2113566003,
+        "lastRun": "2026-11-09",
+        "masterSeed": 71824,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.574468085106383,
-        "cardsCovered": 40,
+        "bucketCoverage": 0.5177304964539007,
+        "cardsCovered": 34,
         "cardsTotal": 93,
-        "effectsVerified": 485,
+        "effectsVerified": 409,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -274,14 +274,14 @@
       "updated": "2026-07-19",
       "notes": "10/10 CERTIFIED 2026-07-19 — full 5-gate pass. Gate 1: three-layer audit clean, 0 gaps. Gate 1.5: 92/92 smoke tests pass (FaceCommander behavioral assertion authored for Tidus, Yuna's Guardian move_counter trigger). Gate 1.5b: 16 complexity-flagged cards specialist-verified — 12 PASS (auron structural shell, bane_of_progress, collective_effort, destroy_evil, farewell, promise_of_loyalty, summoner_s_sending, summon_ixion, summon_magus_sisters, tidus_yuna_s_guardian, together_forever structural shell, yuna_s_decision structural shell, yuna_s_whistle structural shell), 4 real bugs found+fixed: (1) Shelinda, Yevon Acolyte — dead @svar:X/binding_true no-op from a mapper gap in value-vs-value SVar branch comparisons (symbolic operand, not numeric), fixed via ApiTypeMapper TryParseSVarCompareDynamic; (2) Scholar of New Horizons — search decoupled from placement + missing land-count gate, fixed via ForgeToEffectGraphMapper TryMapConditionalRememberedSearchRoute; (3) Yuna's Decision — 'creature and/or land' capped at 1 card + permissive filter fallback (mapper), plus sacrifice→draw 'if you do' gate reading the wrong binding key (engine, ConditionEvaluator); (4) Yuna's Whistle — stale dig/no-rememberFound canonical, DigUntilEffect missing the engine-wide rememberedCardManaCost binding alias, and reflexive 'when you do' target resolution never wired for add_counter (new reflexiveTarget mechanism added end-to-end: mapper MarkInlineReflexiveTriggerTargets + engine + harness). Two more bugs found incidentally during Gate 1.5b/audit work and fixed inline: Auron, Venerated Guardian (mapper dropped variable-suffix powerLTX target restriction entirely + engine's multi-target exile path never enforced power bounds — both fixed, corpus-wide scope); Summon: Valefor (chapter I 'each opponent returns their greatest-CMV creature' — choose_card never implemented greatestCMC selection and bounce was hoisted outside the per-opponent loop, so multiplayer only bounced the last opponent; both fixed, corpus-wide scope, proven via new 3-player scenario). One stale forge_runner_gap also fixed on Together Forever (claimed delayed-trigger mechanism unimplemented; it was already working — scenario rewritten with proper assertions). Gate 2: no blocking GH issues (2 generic corpus-wide bulk trackers checked, neither names a Counter Blitz card). Gate 3: 178 pass / 0 fail / 27 skip (all skips audited — genuine Forge-adapter limitations only, doctrine grep clean). Gate 4: implied by Gate 1. Gate 5: 30 games (seed 1980179350) with 3 blessed 10/10 fillers, 0 invariant breaches, 0 effect failures, 0 regressions attributable to this deck (1 unrelated auto-filed issue was for Martial Coup, a filler-deck card). Bundle published v20260718.235731 (7 canonical fixes overlaid onto the 8407-canonical baseline, verified byte-for-byte). Prior notes preserved below. | RECLASSIFIED 2026-07-12: l3-clean tier demoted to swept-no-fails per docs/guides/DECK_CERTIFICATION.md policy — this deck completed Gate 5 (headless-clean) + a Layer-3 scenario patch but never went through the full Gate 1 three-layer audit, Gate 1.5/1.5b, Gate 2, or Gate 4 (no full-cert evidence found in deck-confidence.json notes or any campaign memory note). Not certified. | Sweep done; open engine bugs. Promoted to 10/10 l3-clean: fail=0 all skips forge_runner_gap, invariantBreaches=0.",
       "headless": {
-        "lastRun": "2026-07-19",
-        "masterSeed": 1980179350,
+        "lastRun": "2026-11-26",
+        "masterSeed": 20261127,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5202702702702703,
-        "cardsCovered": 29,
-        "cardsTotal": 93,
-        "effectsVerified": 523,
+        "bucketCoverage": 0.5241379310344828,
+        "cardsCovered": 32,
+        "cardsTotal": 94,
+        "effectsVerified": 505,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -389,14 +389,14 @@
       "updated": "2026-07-16",
       "notes": "10/10 CERTIFIED 2026-07-16. Full 5-gate cert: Gate1 48-card L3 sweep (65 gaps), Gate1.5 79/79 smoke pass, Gate1.5b 17 specialist checks (3 FAIL fixed: Aberrant damagedPlayerControls ~50-card mapper fix, Swarmlord Xenos Cunning self-death ~160-card mapper fix, Ravener must-attack new engine capability), Gate2 0 open issues, Gate3 213/213 harness pass, Gate5 30 games/0 breaches. 7 engine bugs fixed: Abundance, Nexos, Exocrine, Haruspex, Ghyrson Starn Kelermorph, Inspiring Call, Sporocyst.",
       "headless": {
-        "lastRun": "2026-08-27",
-        "masterSeed": 20260827,
+        "lastRun": "2026-11-09",
+        "masterSeed": 71824,
         "games": 30,
         "saturated": false,
         "bucketCoverage": 0.4961832061068702,
-        "cardsCovered": 27,
+        "cardsCovered": 26,
         "cardsTotal": 81,
-        "effectsVerified": 185,
+        "effectsVerified": 305,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -465,14 +465,14 @@
       "updated": "2026-07-20",
       "notes": "CERTIFIED 2026-07-20: full 5-gate cert (Gate 1/1.5/1.5b/2/3/4/5 all PASS). Gate 1.5b (16 specialist verifies of complexity-flagged cards) found 8 confirmed real bugs, all fixed via mapper/engine (converter-first, no hand-edits): Deadbridge Chant (missing random:true on upkeep choose_card — deterministically reanimated highest-MV card instead of a true random pick; same mapper gap also fixed on Eladamri, Korvecdal); Will of the Sultai (stale canonical missing maxModesIfNoCommander — commander-less casters could illegally choose both modes); Dauthi Voidwalker (3 stacked defects: OppOwn ownership qualifier silently dropped so the void-exile replacement never fired at all, WithCountersType$ VOID never read so no void counter was placed, and the sacrifice-granted play permission died with the source instead of tracking the chosen card); Junji, the Midnight Sky (mode-2 reanimate used a positive subtypeFilter:nonDragon so it always fizzled, and the nondragon exclusion was a silent no-op — new generic engine support for non<Subtype> negation in graveyard targeting, not Dragon-specific); Villainous Wealth (Valid$ Card.IsRemembered mapped to an inert cardFilter instead of defined:remembered, so the free-cast grant silently never fired; also added a CR 110.10 land-exclusion the bug's absence had been masking); Thrasios, Triton Hero (systemic mapper misclassification — a generic Remembered/Card/EQ0 count idiom was mapped to a copy-specific copy_was_made condition, so the draw-instead-of-land branch fired unconditionally; also affects 5 other corpus cards: Inscribed Tablet, Roots of Wisdom, Adventure Awaits, Hakbal of the Surging Soul, Inventive Iteration — flagged for their own decks' next cert/bundle); Victimize (sacrifice wrongly modeled as a cast-time AdditionalCosts entry instead of an in-resolution effect with a CR 608.2 \"if you do\" gate — also caught a single-subject reanimate node silently returning only one of the two chosen targets); Gravecrawler (Zombie-control condition dropped entirely, castable from graveyard with zero Zombies — deeper triage found the whole graveyard-cast grant mechanism was non-functional corpus-wide because grants are revoked on leaving the battlefield and were never re-registered while the source sits in the graveyard; new generic controlsType:<Type> engine condition + graveyard grant registration fixes this for any card using the pattern, fail-closed for 3 other affected cards — Marang River Prowler, The Indomitable, Lukka — whose gate shapes aren't yet mapper-expressible). Also fixed 2 unrelated Layer-1 mapper gaps found during Gate 1 (Corpse Dance's Animate DefinedDesc unconsumed param; Sylvan Library's UnlessCost/UnlessPayer/NoReveal/ChooseOrder unconsumed params) which surfaced 3 further corpus-wide engine bugs: BeginningOfDraw trigger never fired for any card (13 canonicals affected, now fixed), effect-drawn cards weren't tagged \"drawn this turn\" (DrawEffect bypassed NotifyCardDrawn), and a per-iteration unless-cost inside repeat_each was silently dropped. Also caught+fixed a transient APPDATA-drift false regression mid-session (Village Rites' AdditionalCosts and Harrow's sacrifice-cost were reset to a stale pre-fix state by a test bootstrap; restored and re-staged, no code was wrong). Gate 3: 183 pass / 0 fail / 22 skip (all forge_runner_gap skips audited, only genuine Forge/harness limitations, e.g. nonAI-driven Forge combat nondeterminism on Nyx Weaver). Bundle published as spellstack-effect-graphs release v20260720.001535 (overlaid staged fixes onto the prior full-corpus base after the naive staging-only bundle failed the sanity check, per bundle-effect-graphs skill's documented failure path). Gate 5: 30 games (fillers Doom Prevails, The Fantastic Four, Wakanda Forever, all 10/10), 0 errors, 0 invariant breaches, 0 regressions; effectsFailed=0 after the known-conditional-no-op FP blend (raw 9/2716 checks flagged, all absorbed by the existing allowlist, none were new).",
       "headless": {
-        "lastRun": "2026-07-20",
-        "masterSeed": 1000,
+        "lastRun": "2026-11-13",
+        "masterSeed": 20261202,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5851851851851851,
-        "cardsCovered": 37,
-        "cardsTotal": 86,
-        "effectsVerified": 418,
+        "bucketCoverage": 0.6183206106870229,
+        "cardsCovered": 43,
+        "cardsTotal": 88,
+        "effectsVerified": 575,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -690,19 +690,19 @@
       "audit_score": 10
     },
     "Death Toll [DSC] [2024]": {
-      "score": 8,
-      "tier": "recert-needed",
-      "updated": "2026-08-11",
-      "notes": "DEMOTED 2026-08-11 (GH #7291). Gate 3 is no longer clean: death-toll/deadbridge_chant.4 PASSes on 6beab1475 and FAILs once #7291 makes hand_cards a real assertion (spellstack.P1.hand[Lightning Bolt] present/missing). This scenario was MISSING from #7291's own impact enumeration and from #7302 — found during the Tier-1 review by sweeping all 162 corpus files carrying hand_cards/graveyard_cards on both sides and diffing the failing-name SETS, which put the real newly-red count at 14 rather than the 13 (#7302) / 12 (commit message) claimed. Death Toll was therefore the one certified deck the enumeration missed. Cause is the same class as the other five demotions: this deck's Gate 3 was green partly on an assertion that was silently dropped by IgnoreUnmatchedProperties() and never evaluated. Re-certification trigger #4 — a shared harness change invalidating a snapshot without naming any of the deck's cards. NOT re-checked and required before re-certification: (a) deadbridge_chant.4 itself is unrepaired and unattributed — it is not yet known whether the Lightning-Bolt-in-hand assertion is an engine defect or an author error, so it belongs in neither #7302's six nor the engine issues until someone probes it; (b) the rest of this deck's Gate 3 was not re-run (the 162-file sweep covers only the scenarios carrying a zone-card key, which for this deck is a subset); (c) no other gate was re-assessed, so 8 reflects a known-bad Gate 3 rather than a fresh five-gate pass. Also noted while sweeping: death-toll/grapple_with_the_past.2 FAILs on BOTH sides, so it is pre-existing and unrelated to #7291 — it is not tracked anywhere I could find and needs its own triage. --- ORIGINAL CERT NOTES (2026-07-22) --- CERTIFIED 10/10 2026-07-22 via full 5-gate process (docs/guides/DECK_CERTIFICATION.md), sweep deck #25 (swept-no-fails tier). Gate 1: coverage-audit []. Gate 1.5: DeathTollDeckSmokeTests 87/87 compile clean, Winter FaceCommander behavioral assertion authored (attacks→mill 3, library/graveyard delta asserted). Gate 1.5b: 19 complexity-flagged cards specialist-verified. 15 PASS clean on first pass (Arachnogenesis, Titania Nature's Force, Inscription of Abundance, Reanimate, Grist the Hunger Tide, Ishkanah Grafwidow, Obsessive Skinner, Scavenging Ooze, Wrenn and Seven, Into the Pit, Demolisher Spawn, Deadbridge Chant, Noxious Gearhulk, Professor Onyx, Culling Ritual). Convert to Slime was flagged FAIL by the first specialist but confirmed a false positive by two independent adversarial rechecks — the destroy-acquisition pump→AllPermanents-destroy shape is a deliberate, certified engine idiom shared with Decimate/Hull Breach, not a board wipe. 3 real bugs found and fixed, each independently Tier-2 rechecked before merge (commit 6ad7541ce also fixed a Professor Onyx -8 target-mapping gap + a latent NonRememberedOpponents crash pre-dating this cert): (1) Rendmaw, Creaking Nest's goaded tokens lost goad status after the controller's next turn instead of 'for the rest of the game' — new GoadOrigin.RestOfGame engine mechanism, anchored to the goaded creature rather than the source so it survives both cross-turn pruning and the source leaving the battlefield (c9c9b8308); corpus-wide follow-up still open for Nettling Nuisance/Life of the Party/Jon Irenicus, which share the same dropped Duration$Permanent. (2) Demonic Covenant's end-step sacrifice was mapped to an unconditional edict forcing a targeted PLAYER to sacrifice, instead of a conditional self-sacrifice gated on 'two milled cards share all their card types' — new milled_cards_share_all_types NodeConditions mechanism (777dce114). (3) Winter, Cynical Opportunist (face commander) could illegally reanimate an unrelated permanent sitting in its controller's exile zone instead of only the cards its own delirium exile step just exiled (CR 608.2b violation) — required unblocking a whole-card conversion failure (WithTotalCardTypes$ unconsumed) plus 3 more sub-fixes (exile fromZone, trigger optionality, finality-counter application) and a genuine engine gap in the interactive move-to-battlefield choice path (aa0182ecc). A first version of Winter's fix introduced a real corpus-wide regression (SetCannotDecline keyed on `!optional`, which defaults false, wrongly forcing other decks' genuinely-optional 'you may' cards non-declinable — caught via squirreled-away/cache_grab.2 flipping PASS→FAIL) — round-1 Tier-2 recheck caught it before merge, corrected to an explicit mandatorySelection parameter, round-2 recheck confirmed clean. Also fixed in the same session (not Gate-1.5b-flagged but discovered investigating Gate 2): move_zone Graveyard→Battlefield paths never fired ETB triggers (GH #6679 follow-up; Death Toll's own Reanimate card unaffected — uses a separate, already-correct 'reanimate' NodeType) (55c9e8797). Gate 2: 0 blocking issues (#6679's title-match on 'Reanimate' was a resolved false positive once traced to the actual code path). Gate 3: 290 executed, 0 fail, 41 forge_runner_gap skips all genuine Forge-adapter limitations (0 SpellStack-engine-gap comments) — includes 2 scenarios (professor_onyx.5/.6) that are forge_runner_gap+spell_stack_only and therefore a hard harness skip regardless (never actually execute); real coverage for that logic lives in SpellStack.Tests/Cards/ProfessorOnyxUltimateTests.cs (3 unit tests driving the compiled graph directly). Gate 5: 30 games seed 71824 (fillers: Turtle Power!, Tyranid Swarm, Necron Dynasties, all blessed 10/10), 0 invariant breaches, 0 regressions, 0 effects failed for this deck. Prior notes: RECLASSIFIED 2026-07-12: l3-clean tier demoted to swept-no-fails per docs/guides/DECK_CERTIFICATION.md policy — this deck completed Gate 5 (headless-clean) + a Layer-3 scenario patch but never went through the full Gate 1 three-layer audit, Gate 1.5/1.5b, Gate 2, or Gate 4 (no full-cert evidence found in deck-confidence.json notes or any campaign memory note). Not certified. Prior notes preserved below. | pass=12 fail=0 skip=2 (forge_runner_gap: Forge adapterError on land-cast for Titania). Headless effectsFailed=0 invariantBreaches=0 regressions=0. Fixed: arachnogenesis excludeSourceSubtype Spider, wrenn_and_seven qty-all Hand→BF, pump node for CDA Treefolk token, permanent filter for -8 GY→Hand (Filter:None override bug). Promoted to 10/10 l3-clean.",
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-09",
+      "notes": "RE-CERTIFIED 10/10 2026-11-09 (five gates, docs/guides/DECK_CERTIFICATION.md). Gate 0: .dck 92 card lines parsed = 92; 86 unique nonbasic cards = 86 scenario card: fields, no contamination. Gate 1: coverage-audit json [] + table 0 gaps (re-run fresh as last step). Layer 3: all 26 canonicals that changed since the 2026-07-22 cert bundle (v20260722.154350) diffed against it; the 15 not certified in another deck were checked against fetched oracle text (Carrion Grub, Cemetery Tampering, Crawling Sensation, Deluge of Doom, Demonic Covenant, Giant Adephage, Into the Pit, Polluted Cistern, Professor Onyx, Rendmaw, Titania, Ursine Monstrosity, Vile Mutilator, Whip of Erebos, Winter, Wrenn and Seven); 55 cards are in another certified deck (multi-deck rule). Gate 1.5: DeathTollDeckSmokeTests 87/87, 0 NotExecuted, exit 0. Gate 1.5b: 22 flagged; the changed ones were re-checked by the recert worker against oracle text and scenarios (there was no independent specialist dispatch, so the lead may want one). Gate 2: --limit 5000 (1,739 open). #9092/#8389/#8221 are resolved on the recert branch and must be CLOSED AT MERGE. Stale #1075/#1079 entries removed (they now convert Clean). Non-blocking: #8553 (deck card only named in its found-during line), #7220 (reanimate node type; the Reanimate card is targeted and never takes the suspension arm), #6306 (incidental Solemn workaround note), #7259 and Sol Ring #1025/#1026 (exempt). Gate 3: 304/304 PASS, 0 fail. 11 forge_runner_gap files remain, all spell_stack_only, each naming a Forge-side cause and each mutation-probed to FAIL on a wrong value. The deadbridge_chant.4 and grapple_with_the_past.2 demotion items pass. Bugs fixed: (1) Carrion Grub greatest-power CDA shipped as a creature-card COUNT (StaticMapper + new your_graveyard:<type>$GreatestCardPower); (2) a dig's 'rest into your graveyard' fired no PutIntoGraveyard trigger (Skola Grovedancer, Crawling Sensation); (3) a discard never fired the BatchTrigger PutIntoGraveyard tier; (4) Crawling Sensation's first-time-each-turn was mapped once per GAME and is now per turn from game history. Plus about 30 scenario repairs (dead keys, agreement-on-rejection, backward advances, wrong premises). Full-corpus convert-forge diff: exactly 2 cards changed. 105-scenario PutIntoGraveyard blast radius: 3 fails, all identical on master. Gate 5: 30 games, seed 71824, fillers Turtle Power!/Tyranid Swarm/Necron Dynasties: 0 breaches, 0 regressions, 0 effectsFailed for this deck. KNOWN APPROXIMATION, not fixed (lead decision): Hideaway/ExiledWith play_exiled_card grants a deferred free-play permission instead of a play during the trigger's resolution (CR 608.2g; Windbrisk Heights ruling 2007-10-01). This affects Cemetery Tampering and about 18 corpus scripts. cemetery_tampering.2/.3 play the card right after the trigger, so they do not depend on the difference. --- PRIOR NOTES --- DEMOTED 2026-08-11 (GH #7291). Gate 3 is no longer clean: death-toll/deadbridge_chant.4 PASSes on 6beab1475 and FAILs once #7291 makes hand_cards a real assertion (spellstack.P1.hand[Lightning Bolt] present/missing). This scenario was MISSING from #7291's own impact enumeration and from #7302 — found during the Tier-1 review by sweeping all 162 corpus files carrying hand_cards/graveyard_cards on both sides and diffing the failing-name SETS, which put the real newly-red count at 14 rather than the 13 (#7302) / 12 (commit message) claimed. Death Toll was therefore the one certified deck the enumeration missed. Cause is the same class as the other five demotions: this deck's Gate 3 was green partly on an assertion that was silently dropped by IgnoreUnmatchedProperties() and never evaluated. Re-certification trigger #4 — a shared harness change invalidating a snapshot without naming any of the deck's cards. NOT re-checked and required before re-certification: (a) deadbridge_chant.4 itself is unrepaired and unattributed — it is not yet known whether the Lightning-Bolt-in-hand assertion is an engine defect or an author error, so it belongs in neither #7302's six nor the engine issues until someone probes it; (b) the rest of this deck's Gate 3 was not re-run (the 162-file sweep covers only the scenarios carrying a zone-card key, which for this deck is a subset); (c) no other gate was re-assessed, so 8 reflects a known-bad Gate 3 rather than a fresh five-gate pass. Also noted while sweeping: death-toll/grapple_with_the_past.2 FAILs on BOTH sides, so it is pre-existing and unrelated to #7291 — it is not tracked anywhere I could find and needs its own triage. --- ORIGINAL CERT NOTES (2026-07-22) --- CERTIFIED 10/10 2026-07-22 via full 5-gate process (docs/guides/DECK_CERTIFICATION.md), sweep deck #25 (swept-no-fails tier). Gate 1: coverage-audit []. Gate 1.5: DeathTollDeckSmokeTests 87/87 compile clean, Winter FaceCommander behavioral assertion authored (attacks→mill 3, library/graveyard delta asserted). Gate 1.5b: 19 complexity-flagged cards specialist-verified. 15 PASS clean on first pass (Arachnogenesis, Titania Nature's Force, Inscription of Abundance, Reanimate, Grist the Hunger Tide, Ishkanah Grafwidow, Obsessive Skinner, Scavenging Ooze, Wrenn and Seven, Into the Pit, Demolisher Spawn, Deadbridge Chant, Noxious Gearhulk, Professor Onyx, Culling Ritual). Convert to Slime was flagged FAIL by the first specialist but confirmed a false positive by two independent adversarial rechecks — the destroy-acquisition pump→AllPermanents-destroy shape is a deliberate, certified engine idiom shared with Decimate/Hull Breach, not a board wipe. 3 real bugs found and fixed, each independently Tier-2 rechecked before merge (commit 6ad7541ce also fixed a Professor Onyx -8 target-mapping gap + a latent NonRememberedOpponents crash pre-dating this cert): (1) Rendmaw, Creaking Nest's goaded tokens lost goad status after the controller's next turn instead of 'for the rest of the game' — new GoadOrigin.RestOfGame engine mechanism, anchored to the goaded creature rather than the source so it survives both cross-turn pruning and the source leaving the battlefield (c9c9b8308); corpus-wide follow-up still open for Nettling Nuisance/Life of the Party/Jon Irenicus, which share the same dropped Duration$Permanent. (2) Demonic Covenant's end-step sacrifice was mapped to an unconditional edict forcing a targeted PLAYER to sacrifice, instead of a conditional self-sacrifice gated on 'two milled cards share all their card types' — new milled_cards_share_all_types NodeConditions mechanism (777dce114). (3) Winter, Cynical Opportunist (face commander) could illegally reanimate an unrelated permanent sitting in its controller's exile zone instead of only the cards its own delirium exile step just exiled (CR 608.2b violation) — required unblocking a whole-card conversion failure (WithTotalCardTypes$ unconsumed) plus 3 more sub-fixes (exile fromZone, trigger optionality, finality-counter application) and a genuine engine gap in the interactive move-to-battlefield choice path (aa0182ecc). A first version of Winter's fix introduced a real corpus-wide regression (SetCannotDecline keyed on `!optional`, which defaults false, wrongly forcing other decks' genuinely-optional 'you may' cards non-declinable — caught via squirreled-away/cache_grab.2 flipping PASS→FAIL) — round-1 Tier-2 recheck caught it before merge, corrected to an explicit mandatorySelection parameter, round-2 recheck confirmed clean. Also fixed in the same session (not Gate-1.5b-flagged but discovered investigating Gate 2): move_zone Graveyard→Battlefield paths never fired ETB triggers (GH #6679 follow-up; Death Toll's own Reanimate card unaffected — uses a separate, already-correct 'reanimate' NodeType) (55c9e8797). Gate 2: 0 blocking issues (#6679's title-match on 'Reanimate' was a resolved false positive once traced to the actual code path). Gate 3: 290 executed, 0 fail, 41 forge_runner_gap skips all genuine Forge-adapter limitations (0 SpellStack-engine-gap comments) — includes 2 scenarios (professor_onyx.5/.6) that are forge_runner_gap+spell_stack_only and therefore a hard harness skip regardless (never actually execute); real coverage for that logic lives in SpellStack.Tests/Cards/ProfessorOnyxUltimateTests.cs (3 unit tests driving the compiled graph directly). Gate 5: 30 games seed 71824 (fillers: Turtle Power!, Tyranid Swarm, Necron Dynasties, all blessed 10/10), 0 invariant breaches, 0 regressions, 0 effects failed for this deck. Prior notes: RECLASSIFIED 2026-07-12: l3-clean tier demoted to swept-no-fails per docs/guides/DECK_CERTIFICATION.md policy — this deck completed Gate 5 (headless-clean) + a Layer-3 scenario patch but never went through the full Gate 1 three-layer audit, Gate 1.5/1.5b, Gate 2, or Gate 4 (no full-cert evidence found in deck-confidence.json notes or any campaign memory note). Not certified. Prior notes preserved below. | pass=12 fail=0 skip=2 (forge_runner_gap: Forge adapterError on land-cast for Titania). Headless effectsFailed=0 invariantBreaches=0 regressions=0. Fixed: arachnogenesis excludeSourceSubtype Spider, wrenn_and_seven qty-all Hand→BF, pump node for CDA Treefolk token, permanent filter for -8 GY→Hand (Filter:None override bug). Promoted to 10/10 l3-clean.",
       "headless": {
-        "lastRun": "2026-09-17",
-        "masterSeed": 1000,
+        "lastRun": "2026-11-09",
+        "masterSeed": 71824,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5642857142857143,
-        "cardsCovered": 33,
+        "bucketCoverage": 0.5785714285714286,
+        "cardsCovered": 34,
         "cardsTotal": 88,
-        "effectsVerified": 401,
+        "effectsVerified": 602,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -869,14 +869,14 @@
       "updated": "2026-07-17",
       "notes": "CERTIFIED 10/10 2026-07-17 (full 5-gate standard, sweep deck #9; last full re-cert was 2026-07-06 as part of the 4-deck WH40K cluster re-cert). Gate 1: 172 scenarios, 0 gaps (coverage-audit []). Gate 1.5/1.5b: standing from the 2026-07-06 re-cert, no canonical changes since for this deck's own cards, not re-run. Gate 2: closed a stale open UAT tracker issue (#4749, 5/10 confidence, predated the 07-06 re-cert), the sole blocker; 0 open issues remain. Gate 3: found and fixed TWO real issues. (1) Beacon of Unrest was silently failing to cast entirely (card stuck in hand, target stayed in graveyard) across 3 scenarios (beacon_of_unrest.1/.2, shard_of_the_nightbringer.2) -- two bugs: the mapper's reanimate ValidTgts->subtypeFilter dropped 'Creature' whenever paired with another type (e.g. 'Creature,Artifact'), which went from harmless to fatal once SpellTargetingState.SelectGraveyardCard started enforcing root-level subtypeFilter (8be089d88, 2026-07-15) -- Beacon had no legal target and fizzled; AND a second latent bug where Beacon's own 'shuffle self into library' Target:Self move node read a stale sibling binding (the reanimated creature) instead of resolving itself, sending Beacon to the graveyard instead of the library once the first bug was fixed. Corpus-wide blast radius from the mapper bug: The Eldest Reborn, Sorin Lord of Innistrad, Yawgmoth's Vile Offering also affected -- all regenerated and bundled v20260717.145425. Fixed in ApiTypeMapper.cs/ZoneManipulationEffects.cs, commit f551622cb. (2) cryptek.3's own premise went stale: the scenario relied on a documented harness limitation (scripted target activation bypassing PerTypeRestrictions) that a later harness improvement (017dece8e/c59a8ae8c, 2026-07-08/14) legitimately closed -- rewrote the scenario with a legal target to preserve the negative-polarity intent, commit 4f4bb0155. Re-ran full harness on necron-dynasties (172 scenarios, 0 fail) plus the two other decks referencing the blast-radius cards: miracle-worker (179 scenarios, 0 fail) and blood-rites (797 scenarios, 2 pre-existing unrelated fails confirmed via canonical NodeType check -- neither blade_of_the_bloodchief nor olivias_wrath touch reanimate/exile mechanics) -- no collateral damage from this fix. Gate 5: 30 games seed 71818 (fillers: Tyranid Swarm, Forces of the Imperium, Lorehold Spirit), 0 invariant breaches, 0 regressions, 0 effects-failed for this deck.",
       "headless": {
-        "lastRun": "2026-08-27",
-        "masterSeed": 20260827,
+        "lastRun": "2026-11-09",
+        "masterSeed": 71824,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5703125,
-        "cardsCovered": 25,
+        "bucketCoverage": 0.5546875,
+        "cardsCovered": 24,
         "cardsTotal": 71,
-        "effectsVerified": 315,
+        "effectsVerified": 420,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -959,19 +959,19 @@
       }
     },
     "Veloci-Ramp-Tor [LCC] [2023]": {
-      "score": 8,
-      "tier": "recert-needed",
-      "updated": "2026-08-08",
-      "notes": "DEMOTED 2026-08-08: Bronzebeak Foragers' second ability ('put target exiled card into its owner's graveyard') is confirmed non-functional — the runtime TargetType enum has no exile-zone member at all, so the ability's target-legality gate always reports zero legal targets and can never open target selection under any board state. This cert predates GH #7129's differential-harness hardening and never actually exercised this ability's real target-legality path (masked, not absent). Needs a real design (new exile-zone TargetType + candidate gathering + harness support) before recert. --- Prior cert history retained below. CERTIFIED 2026-08-05: full 5-gate cert (Gate 1/1.5/1.5b/2/3/4/5 all PASS), last deck in the 35-deck certification sweep. 87 cards, 614 differential scenarios, 611 pass / 0 fail / 3 forge_runner_gap skips (all individually re-probed: Itzquinth's driver-can't-surface-optional-payment-overlay, Regal Behemoth's tap_for_mana adapter gap x2 -- all genuine harness-side limitations with substitute unit coverage). Gate 1.5b: 8 complexity-flagged cards specialist-verified against fetched oracle text and dated Gatherer rulings -- 6 immediate PASS (Etali, Fiery Confluence, Regal Behemoth, Return of the Wildspeaker, Zacama, and Pantlaza whose 'discover up to twice a turn' premise in the dispatch was itself wrong; the real card is a once-per-turn optional discover and the canonical was already correct), 2 real engine bugs found and fixed. Bugs fixed this cert: (1) MaxResolutionsPerTurn was spent when an optional trigger was merely OFFERED not accepted, engine-wide once-per-turn allowance now split into MaxResolutionsPerTurn/MaxTriggersPerTurn with consumption moved to actual resolution (Pantlaza); (2) repeated targeted modal mode selection (Fiery Confluence 'choose the same mode 3x') collected only one target via a 4-link CompositeContextId/consolidation/mode-target-resolution chain, plus a Tier-2-caught follow-on where a multi-target modal mode collapsed onto its last target; (3) Deathgorge Scavenger's negated Remembered-card-type gate failed open on an empty remembered set (empty graveyard spuriously triggered the pump) -- fixed mapper-side with a universal-vs-typed-token discriminator verified against 73 corpus scripts sharing the same EQ0 idiom that a naive fix would have broken; (4) Thunderherd Migration's hand-authored AdditionalCosts (RevealOrPay) had silently reverted to a converter-regenerated canonical missing the cost entirely -- restored from the git-tracked in-tree copy; (5) Akroma's Will's anthem grant didn't lock its affected-permanent set at spell resolution (CR 611.2c) -- fixed engine-wide (277 nodes/256 cards), Tier-2 review caught the first pass over-locking pure rules-modifying restriction effects (Wakestone Gargoyle/Gideon Jura shape) that CR 611.2c sentence 2 exempts, second pass added a characteristic-vs-rules-modifying discriminator verified against dated rulings on both sides (Heroic Intervention/Craterhoof for the lock, Wakestone Gargoyle/Gideon Jura for the exemption); (6) Etali, Primal Storm granted a deferred cast permission letting exiled cards be cast past Declare Blockers, contra a 2021-03-19 ruling requiring in-resolution-only casting -- fixed via a corpus-unique oracle-text match (verified a structural fix would have wrongly broken Mezzio Mugger's legitimately-deferred 'this turn' grant); (7) EffectFeedbackVerifier's Gate-5 auto-check reported a false regression for Ripjaw Raptor's Enrage draw -- 6 compiler node-type aliases (draw_card, discard_card, add_counters, return_from_graveyard, steal, clone) were never normalized to their shared effect class's single hardcoded log tag, so the verifier could never match the breadcrumb regardless of correctness; verifier-only fix, gameplay was never wrong. Every shared-engine fix corpus-swept (branch vs clean baseline, failing SETS diffed not counts) with zero regressions; recert-trigger issues filed for other already-certified decks touching the same shared code (#7094 Pantlaza ~29 decks, #7097 CR 611.2c ~256 cards). Gate 5: 30 games seed 82306 (fillers Turtle Power!, Blast from the Past, Explorers of the Deep): 2077/2077 effects verified, 0 failed, 0 invariant breaches, 0 regressions.",
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-23",
+      "notes": "RE-CERTIFIED 2026-11-23 (demoted 2026-08-08): Gates 1/1.5/1.5b/2/3/4/5 PASS. Root cause of the demotion was NOT a missing exile target type: the 'mana value X' restriction on Bronzebeak Foragers' exiled-card target was a dead parameter (any exiled-with-source card was a legal target for any X) and six scenarios activated it with nothing exiled with the source. Fixed by emitting mveq@binding:spellX on exile-origin move_zone targets (full-corpus diff: exactly Foragers, Gelatinous Cube, Shelob changed, all in the restricting direction); new pos/neg scenarios. Gate 1: 84 cards, 0 gaps. Gate 1.5: 85/85 smoke, 0 skipped. Gate 1.5b: 7 of 10 flagged canonicals equal a fresh regen; Pantlaza, Return of the Wildspeaker (now the mapper regen) and Descendants' Path (changeling engine fix) reviewed by the specialist, vacuous scenarios fixed. Gate 2: fixed Temple Altisaur ('prevent all but 1' never applied to permanents; 10 cards gained their printed scope), Marauding Raptor (damage-gated Dinosaur pump), Deathgorge Scavenger/Etali/Scion/Wrathful Raptors/Progenitor's Icon verified; only the exempt board-dump feedback mention remains. Gate 3: 638 scenarios (full dir) pass; the Regal Behemoth adapter-gap markers and the stale reveal-land scenarios were replaced by real tap_for_mana/play_land scenarios; no forge_runner_gap flag remains. Gate 5: 30 games seed 20261124 (fillers Ahoy Mateys, Blood Rites, Explorers of the Deep), 0 breaches/0 failed effects/0 regressions. --- Prior history: DEMOTED 2026-08-08: Bronzebeak Foragers' second ability ('put target exiled card into its owner's graveyard') is confirmed non-functional — the runtime TargetType enum has no exile-zone member at all, so the ability's target-legality gate always reports zero legal targets and can never open target selection under any board state. This cert predates GH #7129's differential-harness hardening and never actually exercised this ability's real target-legality path (masked, not absent). Needs a real design (new exile-zone TargetType + candidate gathering + harness support) before recert. --- Prior cert history retained below. CERTIFIED 2026-08-05: full 5-gate cert (Gate 1/1.5/1.5b/2/3/4/5 all PASS), last deck in the 35-deck certification sweep. 87 cards, 614 differential scenarios, 611 pass / 0 fail / 3 forge_runner_gap skips (all individually re-probed: Itzquinth's driver-can't-surface-optional-payment-overlay, Regal Behemoth's tap_for_mana adapter gap x2 -- all genuine harness-side limitations with substitute unit coverage). Gate 1.5b: 8 complexity-flagged cards specialist-verified against fetched oracle text and dated Gatherer rulings -- 6 immediate PASS (Etali, Fiery Confluence, Regal Behemoth, Return of the Wildspeaker, Zacama, and Pantlaza whose 'discover up to twice a turn' premise in the dispatch was itself wrong; the real card is a once-per-turn optional discover and the canonical was already correct), 2 real engine bugs found and fixed. Bugs fixed this cert: (1) MaxResolutionsPerTurn was spent when an optional trigger was merely OFFERED not accepted, engine-wide once-per-turn allowance now split into MaxResolutionsPerTurn/MaxTriggersPerTurn with consumption moved to actual resolution (Pantlaza); (2) repeated targeted modal mode selection (Fiery Confluence 'choose the same mode 3x') collected only one target via a 4-link CompositeContextId/consolidation/mode-target-resolution chain, plus a Tier-2-caught follow-on where a multi-target modal mode collapsed onto its last target; (3) Deathgorge Scavenger's negated Remembered-card-type gate failed open on an empty remembered set (empty graveyard spuriously triggered the pump) -- fixed mapper-side with a universal-vs-typed-token discriminator verified against 73 corpus scripts sharing the same EQ0 idiom that a naive fix would have broken; (4) Thunderherd Migration's hand-authored AdditionalCosts (RevealOrPay) had silently reverted to a converter-regenerated canonical missing the cost entirely -- restored from the git-tracked in-tree copy; (5) Akroma's Will's anthem grant didn't lock its affected-permanent set at spell resolution (CR 611.2c) -- fixed engine-wide (277 nodes/256 cards), Tier-2 review caught the first pass over-locking pure rules-modifying restriction effects (Wakestone Gargoyle/Gideon Jura shape) that CR 611.2c sentence 2 exempts, second pass added a characteristic-vs-rules-modifying discriminator verified against dated rulings on both sides (Heroic Intervention/Craterhoof for the lock, Wakestone Gargoyle/Gideon Jura for the exemption); (6) Etali, Primal Storm granted a deferred cast permission letting exiled cards be cast past Declare Blockers, contra a 2021-03-19 ruling requiring in-resolution-only casting -- fixed via a corpus-unique oracle-text match (verified a structural fix would have wrongly broken Mezzio Mugger's legitimately-deferred 'this turn' grant); (7) EffectFeedbackVerifier's Gate-5 auto-check reported a false regression for Ripjaw Raptor's Enrage draw -- 6 compiler node-type aliases (draw_card, discard_card, add_counters, return_from_graveyard, steal, clone) were never normalized to their shared effect class's single hardcoded log tag, so the verifier could never match the breadcrumb regardless of correctness; verifier-only fix, gameplay was never wrong. Every shared-engine fix corpus-swept (branch vs clean baseline, failing SETS diffed not counts) with zero regressions; recert-trigger issues filed for other already-certified decks touching the same shared code (#7094 Pantlaza ~29 decks, #7097 CR 611.2c ~256 cards). Gate 5: 30 games seed 82306 (fillers Turtle Power!, Blast from the Past, Explorers of the Deep): 2077/2077 effects verified, 0 failed, 0 invariant breaches, 0 regressions.",
       "headless": {
-        "lastRun": "2026-08-05",
-        "masterSeed": 82306,
+        "lastRun": "2026-11-24",
+        "masterSeed": 20261125,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5285714285714286,
-        "cardsCovered": 30,
+        "bucketCoverage": 0.5547445255474452,
+        "cardsCovered": 34,
         "cardsTotal": 87,
-        "effectsVerified": 295,
+        "effectsVerified": 502,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1035,19 +1035,19 @@
       }
     },
     "Grand Larceny [OTC] [2024]": {
-      "score": 8,
-      "tier": "recert-needed",
-      "updated": "2026-08-30",
-      "notes": "DEMOTED 2026-08-30 (GH #8216/#8217, Hostage Taker fix ac48aa430): re-certification trigger #4 audit found Gate 3 was not actually clean. FIXED this session: Hostage Taker's \"exile it, you may cast that card\" grant never resolved (GH #8211/#8209, engine fix ac48aa430) -- exileUntilLeaves exile steps default their publishLkiAs binding to \"imprintedCards\", which GrantMayPlayEffect never checked; added as a 5th binding arm. hostage_taker.2/.3 added (the existing hostage_taker.1 only asserted zone membership, never that the granted card was castable). Gonti, Canny Acquisitor's own exile-cast mechanism was independently proven sound (GontiExileCastClickPathTests, b4ebfbcfb) -- a second, differently-rooted gap in the same deck, not the same bug. hinterland_harbor.1 was a scenario-authoring bug (needed a Forest/Island, not any two basics) -- fixed, now passes. STILL OPEN, blocking full re-certification: felix_five_boots.1 fails -- GH #8216, Cold-Eyed Selkie's own \"@binding:damage\" draw trigger draws 0 cards regardless of Felix's doubling (isolated: fails identically with Felix removed). plasm_capture.2 fails -- GH #8217, broken by a same-day unrelated commit (7a0cdfe75, per-unit mana color choice #8193) that the DifferentialHarness adapter was not updated for; 0 mana produced instead of 4. Both scenarios were originally silently vacuous (dead assertion keys / wrong setup) and reauthored to fail honestly instead of masking the gap -- Gate 3 is currently 99 pass / 2 fail / 3 skip (skips individually re-probed, genuine forge_runner_gap). Gate 5 re-run clean for this deck specifically (30g, seed 2113566003, fillers Turtle Power!/Lorehold Legacies/The Ruinous Powers -- the user's actual live pod: 0 invariant breaches, 0 effects failed, 0 regressions for Grand Larceny's own block; one unrelated pre-existing effect failure in the Turtle Power! filler deck, 'Special Move', does not affect this deck's score). Re-certify once #8216 and #8217 both close. --- Prior cert history retained below. ---\n\n10/10 CERTIFIED — all five gates pass. Gate 3 99/99 scenarios; Gate 1.5b fixed 4 complexity gaps (arcane_heist graveyard-cast engine path, cazur TriggeredCard, gonti ownership cost-reduction, plasm countered-MV, baleful alt-cost branch) + stack-resident TargetType.Spell selection; Gate 5 30g 0 breaches/0 regressions.",
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-23",
+      "notes": "RE-CERTIFIED 2026-11-23 (was demoted 2026-08-30): Gates 1/1.5/1.5b/2/3/4/5 PASS. Gate 1: 85 cards, 0 gaps (added ninjutsu pos/neg for the 4 ninjas + Reliquary Tower hand-size scenarios). Gate 1.5: 82/82 smoke, 0 skipped. Gate 1.5b: all 24 flagged canonicals equal a fresh mapper regen; the 2 canonicals changed this round (Smirking Spelljacker, Oblivion Sower) verified by new pos/neg scenarios. Gate 2: fixed real defects - Plasm Capture harness seeding (#8217), Baleful Mastery alt-cost reductions, Smirking Spelljacker (own-spell exile, target choice, cast window), Silent-Blade Oni cast from opponent hand, Oblivion Sower land choice/control, Diluvian Primordial multi-opponent + AI; verified unaffected + reworded the rest; only exempt board-dump feedback mentions remain. Gate 3: 129 scenarios (full dir) pass, 2 genuine Forge-side forge_runner_gap files re-read, 0 forge_runner_gap paired with spell_stack_only (stolen_goods dual-flag trap removed; oblivion_sower.1 and the_mimeoplasm.1 funded - both engines had refused the cast). Gate 5: 30 games seed 20261123 (fillers Blood Rites, Explorers of the Deep, We Are the Borg), 0 breaches/0 failed effects/0 regressions after fixing a batch-scope leak the battery found (commander zone choice drained the stack inside an SBA pass).",
       "headless": {
-        "lastRun": "2026-09-17",
-        "masterSeed": 2113566003,
+        "lastRun": "2026-11-24",
+        "masterSeed": 20261124,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.4888888888888889,
-        "cardsCovered": 28,
+        "bucketCoverage": 0.5037037037037037,
+        "cardsCovered": 29,
         "cardsTotal": 88,
-        "effectsVerified": 483,
+        "effectsVerified": 314,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1059,9 +1059,23 @@
       "updated": "2026-06-13"
     },
     "Ahoy Mateys [LCC] [2023]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-22",
+      "headless": {
+        "lastRun": "2026-11-24",
+        "masterSeed": 20261126,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5102040816326531,
+        "cardsCovered": 26,
+        "cardsTotal": 88,
+        "effectsVerified": 301,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 2026-11-22: Gates 1/1.5/1.5b/2/3/4/5 PASS. Gate 1: 85 cards audited, 0 gaps. Gate 1.5: 86/86 smoke, 0 skipped. Gate 1.5b: Zara re-verified on the delta only (one new param, enterAttackingPlaneswalkerOption, executed by 2 scenarios + 4 failing mutants); other flagged cards unchanged since their earlier pass. Gate 2: no open issue names a deck card; #8431/#9607/#1079/#2193/#7294 mentions verified (Zara fixed in 958c64665, stale Siren scenario entries gone) and reworded; UAT #4762 closed. Gate 3: 589/589 pass on the final build against pinned Forge extract, 0 forge_runner_gap. Gate 5: 30 games seed 20261122 (fillers Blood Rites, Explorers of the Deep, We Are the Borg), 0 breaches/0 failed effects/0 regressions. Zara CR 508.4: controller chooses defending player or planeswalker (human dialog, scripted in harness, AI/headless attacks the player). Kaalia TriggeredDefender remainder stays in #8431 (not in this deck)."
     },
     "Angels They're Just Like Us, but Cooler and with Wings [SLD] [2023]": {
       "score": 4,
@@ -1084,9 +1098,23 @@
       "updated": "2026-06-13"
     },
     "Aura of Courage [AFC] [2021]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-22",
+      "notes": "CERTIFIED 10/10 2026-11-22 for release 1.20.0.0a: the gates below were run against the PUBLISHED effect-graph bundle v20261122.191317 (byte-identical to SpellStack/EffectGraphs.zip at master be06c78b3) unzipped into a sandbox store, never the real APPDATA. Gate 0: .dck 89 card lines parsed = 89; 86 unique nonbasic names, every one has differential scenarios by its card: field. Contamination found and reconciled: 2 scenario files for a non-deck card (Crawling Barrens, GH #10243 shape) sat in the deck dir and were moved to tools/differential-scenarios/non-deck-engine-fixes-10243 (both still pass). Gate 1/4: coverage-audit json [] and table 0 uncovered buckets (re-run after the move), no card without a canonical. Gate 1 Layer 3 and Gate 1.5b specialist scan were NOT re-run in this pass (that work was done on the earlier cert branch, merged as PR 10253). Gate 1.5: AuraOfCourageDeckSmokeTests 28 passed, 0 skipped, exit code 0 (the smoke tests return early when a canonical is absent, so the run was falsified: the face-commander behavioral test executed for 2.4 s against the sandbox store, while a whole class finished in milliseconds against an empty store). Gate 3: 1285 distinct scenario files name a deck card (deck dir plus other decks' dirs); 1274 pass, 11 carry forge_runner_gap or harness_adapter_gap flags, 0 failed on this deck's set. None of the 11 skips is in the deck's own directory. Every flagged file in the set was re-probed with the flag stripped: those that passed (run twice) had the stale flag removed in the tree; the rest fail only on a Forge-side cause named in their own comments or on a documented harness limit (puresteel_paladin.2 is backed by PuresteelPaladinMetalcraftEquipCostGh7147Tests). Cards already certified in another deck were not re-audited (Multi-Deck Cards rule); their scenarios were run once as the pass check above. Gate 2: all open issues re-searched (gh issue list --limit 5000, 83 nonbasic nonstaple names, certified-deck cards included). Closed with evidence: #7034 #7036 #7147 #8216 #8596 #8608 #10249 #10251, #9236 (carry-over #10259 for the third card it named) and #10214 (not reproduced; human-seat regression tests and scenarios pass). Reworded incidental mentions, each verified by execution with a comment: #1075 #1079 #7015 #7298 #7617 #7941 #8096 #8204 #8346 #8690 #10155 #10215. #7259 never blocks (Brainstorm is a reprinted staple); #7298 still contains one harness state path (a locator, not a mention); #10247 and #10248 name cards that are not in this deck. Gate 5: 30 games seed 787319 with Death Toll, Wakanda Forever and The Fantastic Four as fillers: 0 errored games, 0 invariant breaches, deck block effectsFailed 0 and regressions 0, console regressions 0. No allowlist entry was added.",
+      "headless": {
+        "lastRun": "2026-11-22",
+        "masterSeed": 787319,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.49324324324324326,
+        "cardsCovered": 35,
+        "cardsTotal": 89,
+        "effectsVerified": 646,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     },
     "Bedecked Brokers [NCC] [2022]": {
       "score": 4,
@@ -1099,14 +1127,14 @@
       "updated": "2026-07-02",
       "notes": "TIER CORRECTED 2026-07-12: label was 'l3-clean' but notes confirm this deck actually completed all 5 gates (cross-verified against the dedicated certification campaign note) — relabeled 'certified', score unchanged. | CERTIFIED 10/10 2026-07-02. Gate 1/1.5/1.5b/2/3/4/5 all PASS. 150 scenarios green, 0 fail, forge_runner_gap audit clean (2 Forge adapter gaps only: bloodthirsty_blade.2 DeclareAttackers enum, keeper_of_the_accord.1 EndOfTurn enum). Engine gaps fixed this cert: suspect/goad wiring, overload widening, vote-tally fan-out, duty-counter statics, lands-entered tracking, cardsDrawnThisTurn per-player, opponentsLifeBelowHalfStart CDA (Anya), registration_effect node (Comeuppance/Gideon's Sacrifice), fiendish_duo/gisela DamageTargetScope, selfless_squire MaxResolutionsPerTurn, orzhov_advokist repeat_each. Gate 5: seed 55000, 30 games, 0 effectsFailed, 0 breaches, 0 regressions (Blame Game 24/86 cards covered, 49.3% bucket).",
       "headless": {
-        "lastRun": "2026-07-03",
-        "masterSeed": 7043,
+        "lastRun": "2026-11-09",
+        "masterSeed": 14600,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5140845070422535,
-        "cardsCovered": 26,
+        "bucketCoverage": 0.5827338129496403,
+        "cardsCovered": 36,
         "cardsTotal": 86,
-        "effectsVerified": 511,
+        "effectsVerified": 613,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1131,14 +1159,42 @@
       }
     },
     "Breed Lethality [C16] [2016]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-26",
+      "headless": {
+        "lastRun": "2026-11-26",
+        "masterSeed": 20261126,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5887096774193549,
+        "cardsCovered": 35,
+        "cardsTotal": 83,
+        "effectsVerified": 491,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 10/10 2026-11-26 (Gates 0/1/1.5/1.5b/2/3/4/5 PASS). C16 and CM2 lists are the same 79 non-basic cards (only basics split differently). 55 cards already in certified decks: their 1,077 corpus scenarios pass-checked singly after merging origin/master b2f847b60 (Forge adapter port): 1,076 PASS, 1 = counter-blitz forgotten_ancient.3 (forge_runner_gap, skipped in batch; Forge fails advancing to Main1; the positive is covered by 6 other passing Forgotten Ancient upkeep scenarios). 24 new cards + Murmuring Bosk (no scenario anywhere before): 79 scenarios in tools/differential-scenarios/breed-lethality (pos+neg per ability, spell_stack_only, every wrong-value mutant FAILS), plus face-up-x-cost (4) and mana-ability-cost-x-9284 (4). Engine built during cert: up-to-N graveyard reanimate zero-target guard + power bound; per-blocker block cap (CR 509.1a); multi-target multiply_counter; Grip of Phyresis attach; CR 305.6 intrinsic basic-land mana on lands with printed mana abilities; face-up {X} morph/disguise costs announce and pay X (Bane of the Living, Warbreak Trumpeter, Aurelia's Vindicator); GH #9284 cost-embedded-X mana abilities announce X (28 abilities); AI skips a self-edict mode with nothing to sacrifice (Yuna's Decision). Gate 1.5: BreedLethalityDeckSmokeTests 26/26, 0 skips. Gate 1.5b: 6 flagged cards verified against oracle+canonical+scenarios by the certifying specialist (no independent dispatch available). Gate 2: closed #9576, #9284, #10267-#10269; #9940 Tezzeret item verified not reproducible; remaining mentions (#8438, #9357, #9751, #1203) are incidental/tracker. Gate 5: C16 seed 20261126 and CM2 seed 20261127, 30/30 each, 0 errored, 0 breaches, 0 failed effects, 0 regressions. Worktree branch worktree-agent-a1ada16409cda33c7."
     },
     "Breed Lethality [CM2] [2018]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-26",
+      "headless": {
+        "lastRun": "2026-11-26",
+        "masterSeed": 20261127,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5887096774193549,
+        "cardsCovered": 35,
+        "cardsTotal": 83,
+        "effectsVerified": 486,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 10/10 2026-11-26 (Gates 0/1/1.5/1.5b/2/3/4/5 PASS). C16 and CM2 lists are the same 79 non-basic cards (only basics split differently). 55 cards already in certified decks: their 1,077 corpus scenarios pass-checked singly after merging origin/master b2f847b60 (Forge adapter port): 1,076 PASS, 1 = counter-blitz forgotten_ancient.3 (forge_runner_gap, skipped in batch; Forge fails advancing to Main1; the positive is covered by 6 other passing Forgotten Ancient upkeep scenarios). 24 new cards + Murmuring Bosk (no scenario anywhere before): 79 scenarios in tools/differential-scenarios/breed-lethality (pos+neg per ability, spell_stack_only, every wrong-value mutant FAILS), plus face-up-x-cost (4) and mana-ability-cost-x-9284 (4). Engine built during cert: up-to-N graveyard reanimate zero-target guard + power bound; per-blocker block cap (CR 509.1a); multi-target multiply_counter; Grip of Phyresis attach; CR 305.6 intrinsic basic-land mana on lands with printed mana abilities; face-up {X} morph/disguise costs announce and pay X (Bane of the Living, Warbreak Trumpeter, Aurelia's Vindicator); GH #9284 cost-embedded-X mana abilities announce X (28 abilities); AI skips a self-edict mode with nothing to sacrifice (Yuna's Decision). Gate 1.5: BreedLethalityDeckSmokeTests 26/26, 0 skips. Gate 1.5b: 6 flagged cards verified against oracle+canonical+scenarios by the certifying specialist (no independent dispatch available). Gate 2: closed #9576, #9284, #10267-#10269; #9940 Tezzeret item verified not reproducible; remaining mentions (#8438, #9357, #9751, #1203) are incidental/tracker. Gate 5: C16 seed 20261126 and CM2 seed 20261127, 30/30 each, 0 errored, 0 breaches, 0 failed effects, 0 regressions. Worktree branch worktree-agent-a1ada16409cda33c7."
     },
     "Buckle Up [NEC] [2022]": {
       "score": 4,
@@ -1166,14 +1222,14 @@
       "updated": "2026-08-23",
       "notes": "CERTIFIED 2026-08-23: full 5-gate cert (Gate 1/1.5/1.5b/2/3/4/5 all PASS). 90 cards across 236 differential scenarios (positive+negative polarity per SCENARIO_COVERAGE_DOCTRINE), authored across 4 parallel worktree-isolated batches for Gate 0/1. Gate 2 found two blockers requiring real engine fixes, not scenario tweaks: GH #7709 (Champion of Lambholt's power-comparison-source static grant had no plumbing to carry the source permanent's live power through a mass block-restriction scope -- fixed via StatModifier.PowerComparisonSource) and GH #7719 (an X-cost Aftermath spell's exile-on-resolve flag was cleared by CastSplitCardHalf's finally block before the deferred XDeclaration continuation ever read it -- fixed by conditioning the clear on whether the cast is mid-deferral). Gate 3's full sweep then found three more real engine bugs, none named in Gate 2's card-list search because two were filed mid-session and one was undiscovered: GH #7713 (ReplacementMapper classified an Event$ Moved | Destination$ Battlefield line as a zone redirect before checking for a ReplaceWith$ PutCounter enter-with-counters chain, silently dropping Semester's End/Teferi's Time Twist/What Must Be Done/Hundred-Battle Veteran's as-enters counter riders), GH #7715 (Uncivil Unrest's damage doubler never recognized the counters_GE1_P1P1 ValidSource$ token, so its counter-presence AND counter-type gates were both silently absent), and GH #7727 (AnthemEffect's counterThreshold was parsed but never threaded into the addStaticAbility Static/Activated grant path, so Rishkar's 'each creature you control with a counter has {T}: Add {G}' applied to every creature regardless of counters). All three of #7709/#7719's siblings (#7713/#7715/#7727) were found already fully implemented, tested, and committed by concurrent fleet agents but stranded uncommitted in stale worktrees (agent-a6d5f98e56c4e100f, agent-a5518b1a1ec53c326, agent-a09a0992789c2f717) -- recovered via git diff/apply rather than reimplemented, each independently rebuilt, regression-tested (stash-based before/after, differing failure sets confirmed as pre-existing test-parallelism flakiness per CLAUDE.md's documented signature, not real regressions), and re-verified against the deck's own scenarios before committing. Gate 3's mandatory forge_runner_gap audit read all 8 flagged scenarios individually: 7 were genuine Forge/harness limitations (2 Planechase die-roll mechanics, 3 scry-is-library-order-only-and-invisible-to-the-diff lands, 1 Forge adapter exiled_cards-injection gap, 1 DrainStack-after-every-action harness limit); 1 (flameshadow_conjuring.2) was misuse with no stated Forge-side reason -- re-probed by execution, found to be a wrong scripted-choice-type authoring bug layered on top of a genuine second Forge-side gap (trigger_optional_decision has no Forge-side reader at all), fixed and reclassified spell_stack_only. Final sweep: 236/236 executed, 0 fail. Gate 5: 30 games (fillers Wakanda Forever, The Fantastic Four, Doom Prevails, seed 787319) crashed at game 12/30 with a stack overflow on the FIRST attempt -- traced to a fourth, independently-discovered real engine bug (not stranded/recovered this time): AITriggerTargetSelector.SelectCreatureTargets hand-rolled a curated subset of restriction tokens and silently dropped everything else, including non<Subtype> exclusions, so the AI could (and did) select Restoration Angel as the target of its own 'exile target non-Angel creature you control, then return it' ETB, producing a new BattlefieldCard whose ETB fired the same trigger again -- unbounded self-recursion. This is the same root design flaw GH #7215 had already reported for opponentControls/youControl (Auron, Venerated Guardian) and gone unfixed; fixed generally by routing the full restriction list through PermanentRestrictionEvaluator.MatchesTokens as a hard AND-filter, closing #7215 as a side effect. Re-run: 30/30 games completed, 0 errored, 0 invariant breaches for Call for Backup specifically (effectsFailed:0, regressions:0 in its own headless block); one auto-generated low-confidence feedback flag surfaced against Doom Prevails' Glorious Purpose (a filler deck, not the deck under certification) and was confirmed a known recurring false positive already diagnosed and closed once in #7650 (EffectFeedbackVerifier miscounting a legitimately CR-608.2f-deferred node) -- closed the two duplicate auto-filed issues (#7742, #7756) referencing that precedent rather than treating it as a blocker.",
       "headless": {
-        "lastRun": "2026-08-23",
-        "masterSeed": 787319,
+        "lastRun": "2026-11-26",
+        "masterSeed": 20261127,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5785714285714286,
-        "cardsCovered": 37,
+        "bucketCoverage": 0.5642857142857143,
+        "cardsCovered": 35,
         "cardsTotal": 90,
-        "effectsVerified": 311,
+        "effectsVerified": 458,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1204,9 +1260,23 @@
       }
     },
     "Chaos Incarnate [SCD] [2022]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-24",
+      "notes": "CERTIFIED 10/10 2026-11-24 (Gates 1/1.5/1.5b/2/3/4/5 PASS). 52 of 73 non-basic cards already in certified decks (skipped per multi-deck rule); 21 new cards audited: 74 scenarios (pos+neg per ability, real Forge differentials where the harness allows, rest spell_stack_only with executed wrong-value mutants). Real bugs fixed: Dredge the Mire stole every permanent from every graveyard; Explosion of Riches fired once and always hit the first opponent (now one per drawn card, each with its own random opponent); opponent-picks-mode triggers ran EVERY mode and never asked the opponent (Indulgent Tormentor, Combustible Gearhulk, Tell Me What You See); Titan Hunter end-step damage inverted; Reign of the Pit Demon sized by one creature instead of total power (Kylox too); Scythe Specter life loss never happened; Rakshasa Debaser attack trigger had no legal target (DefenderCtrl read as subtype; Rysorian Badger too); Wild Ricochet could never redirect and could target creature spells (Goblin Flectomancer too). Gate 5: 30 games seed 20261126, fillers Rebellion Rising/Exquisite Invention/Ahoy Mateys, 0 invariant breaches, 0 effects failed for this deck. Known gaps: Dredge the Mire AI opponent gives up its highest-MV creature (Forge gives its worst; not a rules error); Rysorian Badger defending-player scope and Sideswipe Arcane restriction still approximate; no scenario for Titan Hunter trigger-on-stack death or Unlicensed Disintegration indestructible target.",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261201,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5948275862068966,
+        "cardsCovered": 33,
+        "cardsTotal": 73,
+        "effectsVerified": 481,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     },
     "Corrupting Influence [ONC] [2023]": {
       "score": 4,
@@ -1219,9 +1289,23 @@
       "updated": "2026-06-13"
     },
     "Coven Counters [MIC] [2021]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-22",
+      "notes": "CERTIFIED 10/10 2026-11-22 for release 1.20.0.0a: the gates below were run against the PUBLISHED effect-graph bundle v20261122.191317 (byte-identical to SpellStack/EffectGraphs.zip at master be06c78b3) unzipped into a sandbox store, never the real APPDATA. Gate 0: .dck 78 card lines parsed = 78; 76 unique nonbasic names, every one has differential scenarios by its card: field; scenario dir 130 files, 0 cards outside the decklist. Gate 1/4: coverage-audit json [] and table 0 uncovered buckets, no card without a canonical. Gate 1 Layer 3 and Gate 1.5b specialist scan were NOT re-run in this pass (that work was done on the earlier cert branch, merged as PR 10240). Gate 1.5: CovenCountersDeckSmokeTests 47 passed, 0 skipped, exit code 0 (the smoke tests return early when a canonical is absent, so the run was falsified: the face-commander behavioral test executed for 79 ms against the sandbox store, while the whole 47-test class finished in 7 ms against an empty store). Gate 3: 1434 distinct scenario files name a deck card (deck dir plus other decks' dirs); 1422 pass, 10 carry forge_runner_gap or harness_adapter_gap flags, 2 failed on first run and were fixed. The 2 failures were riders-of-rohan dearly_departed.1/.2, which used stub 'Test' creatures with no effect graph (adapter error 'effect graph not found'); they now cast Elite Vanguard and Grizzly Bears, pass, and fail when the expected counter count is mutated. Every flagged file in the set was re-probed with the flag stripped: 14 passed twice unflagged (flags removed in the tree), the others fail only on a Forge-side cause named in their own comments or on a documented harness limit. None of the 10 skips is in the deck's own directory. Cards already certified in another deck were not re-audited (Multi-Deck Cards rule); their scenarios were run once as the pass check above. Gate 2: all open issues re-searched (gh issue list --limit 5000, 73 nonbasic nonstaple names, certified-deck cards included): closed or carried forward with evidence #8011 (carry-over #10258), #8744 (carry-over #10257), #9052 (331 to 1 blank canonical, carry-over #10256), and reworded incidental mentions with verification comments on #1075 #1079 #2193 #7107 #7120 #7759 #9689 #10179 #10215; #10214 closed as not reproduced; #7259 never blocks (Swords to Plowshares is a reprinted staple). Gate 5: 30 games seed 20261210 with Death Toll, Wakanda Forever and The Fantastic Four as fillers: 0 errored games, 0 invariant breaches, deck block effectsFailed 0 and regressions 0. The console summary also listed one regression keyed 'Moorland Rescuer (trigger)' (auto-check 'unmatched reanimate' on the death trigger); the key carries a '(trigger)' suffix, so it is not charged to any deck block. It did not recur in a second 30-game run at seed 14500 (0 regressions, 0 errors), and the card's 7 differential scenarios pass, including the cap-exceeded and itself-never-returns negatives, so it is read as the no-eligible-card no-op shape. No allowlist entry was added. Unverifiable here: the 8 aggregate effects failures in the seed 20261210 run were not attributed to cards in the feedback log (only one entry was written).",
+      "headless": {
+        "lastRun": "2026-11-26",
+        "masterSeed": 20261127,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5826771653543307,
+        "cardsCovered": 31,
+        "cardsTotal": 78,
+        "effectsVerified": 471,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     },
     "Deadly Disguise [MKC] [2024]": {
       "score": 10,
@@ -1229,14 +1313,14 @@
       "updated": "2026-07-02",
       "notes": "10/10 CERTIFIED 2026-07-02. All 5 gates pass. Fixed 12+ engine gaps + systemic bugs surfaced by the honest Gate-3 masked-fail audit: colorless-cast trigger (empty Colors CR105.2c), turn-face-down effect, turn-face-up trigger doubling (CR603.7 vs ETB), scry-before-draw duplication (human path), turned-face-up-this-turn tracking, jeska targetedPlayerHand count + producedFor, printlifter withCounters (0/0 token SBA), facedown filter, wild_growth NotifyLandTappedForMana, disguise-land face-up adapter, per-player exile+cloak (includeController + slot ordering), basepowereq/basetoughnesseq filter, adapter face-up-cost prefill, CR603.7/614.6 doubling gate, and the SYSTEMIC TurnedFaceUp trigger routing bug (targeted turn-face-up triggers no-opped via empty-Targets stack push — rerouted through interactive ProcessGameEventTriggers). Gate 3: 120 pass / 0 fail / 63 forge-adapter skips, forge_runner_gap blocker grep CLEAN, 0 masked spell_stack_only fails (all 63 skips probed single-mode). Gate 1.5: 89/89 smoke (Kaust commander behavioral assertion authored). Gate 5: 30/30 headless, 0 errored. Commits ce42a85c2 7d747702d 1572409f3 30f2bb180 a8325be15 25861d300 a0f7d78c7 30a31b47c 9cb8d8b0d.",
       "headless": {
-        "lastRun": "2026-09-17",
-        "masterSeed": 14500,
+        "lastRun": "2026-11-09",
+        "masterSeed": 14600,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.4965986394557823,
+        "bucketCoverage": 0.5034013605442177,
         "cardsCovered": 29,
         "cardsTotal": 92,
-        "effectsVerified": 289,
+        "effectsVerified": 327,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1248,14 +1332,14 @@
       "updated": "2026-10-07",
       "notes": "CERTIFIED 10/10 2026-10-07 via full 5-gate process (docs/guides/DECK_CERTIFICATION.md). Unlike a from-scratch cert, this deck started with substantial pre-existing scenario coverage (~203 files from earlier bootstrap/authoring work); Gate 1 Layer-3 manual review closed remaining gaps rather than authoring from zero: Reliquary Tower (Layer-2 bucket gap), Krosan Verge's uncovered sac-and-fetch second ability, Farewell's full 4-mode \"choose one or more\" coverage (artifacts/creatures/enchantments/graveyards, including a CR 704.5m Aura-falls-off-to-graveyard double-discriminator), Finale of Revelation's basic draw mode, Temple of the False God's sub-threshold/filter-discrimination polarity, Canopy Vista/Prairie Stream's ETB-tapped-unless-two-basic-lands condition (positive+negative+filter-discrimination), Exotic Orchard (previously silently testing nothing -- opponent had no lands), Swords to Plowshares' life-gain-amount assertion plus a 0-power edge case, and 13 mana-producing cards that had no real assertions at all (several needing a commander on board to even exercise their ability). Real engine/mapper bugs found and fixed along the way: Aerial Extortionist's grant-may-play permission wrongly scoped to the caster instead of the exiled card's owner (Forge EffectOwner$ param-precedence gap, +3 corpus collateral: Prowl Stoic Strategist, Release to the Wind, Casey & Raph Hotheads); Bennie Bracks' missing \"created a token this turn\" intervening-if (mapper had no arm for the Forge idiom, engine's turn-tracker didn't record token-ness at all); Finale of Revelation's X>=10 bonus mode silently no-opping (MoveZoneEffect read a JSON-authored node's declared target as a JsonElement instead of a string in 12 places); Koma Cosmos Serpent's activation-lock stacked two bugs where fixing either alone would have shipped broken (a dead lone-cant_activate clause, masked by sibling cards that always paired it with cant_attack/cant_block; and a latent Filter:None global-lock gap that fixing the first bug alone would have exposed) plus a separate token-name mapper bug dropping apostrophes/commas from 11 corpus cards' created-token names (Koma's Coil, Ajani's Pridemate, Kobolds of Kher Keep, Ashaya the Awoken World, Mark of the Rani, Tuktuk the Returned, Plaguebearer of Nurgle, Powerstone Token x3); Serene Sleuth's goaded-creature count investigating ALL creatures instead of only goaded ones (two-sided mapper+engine gap, plus an unrelated unconsumed-param conversion-Error that was silently blocking the stale canonical from ever being regenerated); Tezzeret Betrayer of Flesh's cost-reduction static was completely inert (discounted nothing, ever) and its -2 ability was missing the printed Vehicle exception, overwriting a Vehicle's base P/T (+4 corpus collateral: Katsumasa the Animator, Lifecraft Awakening, Azure Beastbinder, Tezzeret Cruel Captain's emblem); Tangletrove Kelp had shipped NO canonical at all for its combat trigger (three independently-necessary mapper gaps all blocked conversion to Severity:Error, so `--save` silently wrote nothing and a stale pre-mapper artifact shipped instead); Ransom Note's apparent SpellStack bug was actually a Java Forge-differential-adapter bug (mode[N] scripted choices collected too late for any modal ability carrying a same-line self-sacrifice cost, so Forge silently fell back to its own AI's mode pick -- found and fixed in tools/forge-differential-adapter, with Phoenix Down flagged as a sibling beneficiary for a future session). Gate 2: the deck's cards were referenced only in stale multi-deck campaign-tracking issues (GH #7294/#7275/#7107/#7316) whose line items for this deck's cards were already resolved by prior remediation; verified by execution, not assumed. Gate 3: full mandatory forge_runner_gap audit across every flagged scenario -- beyond the engine bugs above (which were self-conceded behind the flag, a doctrine violation), found and fixed 3 scenarios with a redundant forge_runner_gap alongside spell_stack_only (the doctrine-forbidden dual-flag combination), 3 flags with zero justifying comment at all (the presumptively-suspect pattern), 2 scenarios whose comments claimed specific assertions that were never actually written as a real expected: block, 1 genuinely stale flag (a previously-broken delayed-trigger mechanism now fires correctly), and 1 flag whose stated reason was factually wrong (claimed \"both engines reject it\" when both actually resolved it successfully) -- corrected to accurately describe the real mechanism (SpellStackAdapter.PrefillManaPoolForAbility unconditionally funds any activated ability's mana cost regardless of the player's actual mana sources, a genuine harness_adapter_gap distinct from a Forge-vs-SpellStack rules divergence). 8 forge_runner_gap scenarios remain, every one individually re-probed by execution and confirmed to name a real Forge-side or harness-side cause. Gate 4: PASS via Gate 1. Gate 5: 30 games, master seed 20261007, 3 blessed 10/10 fillers (Wakanda Forever, The Fantastic Four, Doom Prevails), 0 invariant breaches, 509 effects verified for this deck. One apparent regression (Lonis, Cryptozoologist, 4 fails) investigated and confirmed a known Bucket-4 conditional-no-op false positive -- its sac-X-Clues ability's optional \"put a nonland permanent card onto the battlefield\" move_zone node correctly has nothing to move when no revealed card qualifies, exactly the negative polarity this session's own Gate 1 scenario (lonis_cryptozoologist.4.yaml) already mutation-tested as a PASS; added to CardVerificationHistory.KnownConditionalNoOpFpCards with that scenario cited as independent corroboration, not added on precedent shape alone.",
       "headless": {
-        "lastRun": "2026-10-14",
-        "masterSeed": 20261014,
+        "lastRun": "2026-11-09",
+        "masterSeed": 14600,
         "games": 30,
         "saturated": false,
         "bucketCoverage": 0.48,
         "cardsCovered": 24,
         "cardsTotal": 89,
-        "effectsVerified": 411,
+        "effectsVerified": 688,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
@@ -1422,9 +1506,23 @@
       }
     },
     "Exquisite Invention [C18] [2018]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-24",
+      "notes": "CERTIFIED 10/10 2026-11-24 (first not-audited deck certified; Gates 1/1.5/1.5b/2/3/4/5 PASS). 56 of 75 distinct cards already in certified decks (skipped per multi-deck rule); 19 new cards audited: 106 scenarios (pos+neg per ability, 39 real Forge differentials, rest spell_stack_only with executed wrong-value mutants) + 9 collateral-fix scenarios (exq-b-collateral-fixes). Real bugs fixed: Geode Golem free commander cast never happened; Saheeli the Gifted gave affinity to every spell; Varchild/Frenetic Raptor/Karrthus Survivor/Beast/Dragon subtype scope dropped (over-broad can't-block/steal); improvise and waterbend failed casts left permanents tapped; Mimic Vat/Prototype Portal/Soul Foundry imprint-copy copied the artifact itself (X unpaid); Blinkmoth Urn never added mana (+12 corpus cards with the same always-0 active-player count); Saheeli's Directive could not use Improvise for X; Bothersome Quasit/Spitting Dilophosaurus/Magistrate's Veto can't-block hit all creatures. Bundle v20261124.073340 (22 canonicals changed, ground truth clean). Gate 5: 30 games seed 20261124, fillers Ahoy Mateys/Veloci-Ramp-Tor/Grand Larceny, 0 invariant breaches, 0 effects failed. Known gaps: Kratos God of War still inert (mapper loses didn't-attack condition); Geode Golem does not prompt a human with partner commanders; Mimic Vat nontoken filter not distinguishable by scenario.",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261129,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.6771653543307087,
+        "cardsCovered": 38,
+        "cardsTotal": 75,
+        "effectsVerified": 858,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     },
     "Faceless Menace [C19] [2019]": {
       "score": 4,
@@ -1606,9 +1704,23 @@
       "updated": "2026-06-13"
     },
     "Mirror Mastery [COM] [2011]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-25",
+      "notes": "CERTIFIED 10/10 2026-11-25 (Gates 1/1.5/1.5b/2/3/4/5 PASS). 23 of 72 non-basic cards already in certified decks (skipped per multi-deck rule); 49 new cards audited by two agents: 178 scenarios (pos+neg per ability, real Forge differentials where the harness allows, rest spell_stack_only with executed wrong-value mutants), commander Riku covered by 9 scenarios + 3-player probes. Real bugs fixed: Prophetic Prism gave free mana; Valley Rannet forestcycling missing (first-typecycling-only, 4 more cards); Vengeful Rebirth exiled itself wrongly / Jadzi never put a land (conditional gate covered the unconditional exile); each-player searches only searched the controller (13 cards); Trench Gorger stayed 6/6 (no exiled count); Death by Dragons never targeted; Garruk +1 with one land opened an impossible prompt; 'another target creature card' regrowth threw away targets (6 cards); Invigorate engine picked the opponent for a human; join forces always 0 (4 cards); Conundrum Sphinx only one player named; mandatory reveal-a-creature additional cost dropped (5 cards, Calamity of the Titans exiled everything); Titan's Presence power check missing; harness made seats 3+ AI so P3/P4 scripted choices were never read (9 scenarios re-seeded, Mana Clash now asserts 3/4 at seed 52491 not 5/3), duplicate YAML keys silently replaced assertions; coverage-audit ignored the cycle action. Gate 5: 30 games seed 20261127, fillers Chaos Incarnate/Rebellion Rising/Exquisite Invention, 0 invariant breaches, 0 effects failed for this deck (run total showed 2 failed effects attributed to no deck). Known gaps: AI picks only the first typecycling ability; Invigorate 2020-08-07 ruling (opponent who cannot gain life) not enforced; a human who declines Veteran Explorer's search confirms an empty pick; evoke bounce/destroy target is not offered to a human in the harness (unverified in live play); Riku copying X/kicked spells and Jadzi nonland branch not covered; Myr Incubator canonical lacks {T} (Forge script omits it).",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261201,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5535714285714286,
+        "cardsCovered": 33,
+        "cardsTotal": 75,
+        "effectsVerified": 361,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
     },
     "Mishra's Burnished Banner [BRC] [2022]": {
       "score": 4,
@@ -1621,9 +1733,23 @@
       "updated": "2026-06-13"
     },
     "Nature of the Beast [C13] [2013]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-25",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261201,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5,
+        "cardsCovered": 33,
+        "cardsTotal": 86,
+        "effectsVerified": 327,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 10/10 2026-11-25 (Gates 1/1.5/1.5b/2/3/4/5 PASS). 40 of 86 non-basic cards already in certified decks (skipped per multi-deck rule); 46 new cards audited by two agents: 193 scenarios in the deck dir (pos+neg per ability, wrong-value mutants fail; spell_stack_only only with Forge-adapter code-absence justification), commander Marath: 5 scenarios + behavioral smoke test (3/3 Elemental token, X=4 mutant fails). Gate 1.5b: 8 flagged cards PASS (executed probes). Gate 5: 30 games seed 20261129, fillers Chaos Incarnate/Mirror Mastery/Exquisite Invention, 0 invariant breaches, 0 effects failed for this deck; the one Curse of Chaos auto-check regression (GH #10263) was a verifier false positive (draw is conditional on the optional discard), closed with executed scenario evidence. Mechanics BUILT per the owner standing rule (cert builds missing mechanics): per-requirement opponent chooser for 'target ... of an opponent's choice' (GH #8616: Magus of the Arena + Arena, Echo Chamber, Evangelize, Preacher, Diaochan, Volcanic Offering, Nova Pentacle; harness key opponent_chosen_target); Mystic Barrier choose-direction + nearest-opponent attack restriction (also Pramikon, Teyo); in-resolution paid casts announce X (GH #8173, CR 107.3b free casts stay X=0); cast-tax families for 25 cards (GH #9125, rest in progress); War Cadence block tax once per creature (GH #7889); 8 unscoped per-permanent restrictions scoped (GH #10225); Cinderheart Giant random choice. Engine bugs fixed: Marath entered as 0/0 from the command zone (mana left floating recorded instead of mana spent); curse 'attacks enchanted player' and Gahiji 'attacks an opponent' fired for planeswalker/battle attacks; Fiery Justice/Magma Opus divided damage gave players 0; library searches ignored power/toughness clauses (Mayael + 6 cards); From the Ashes double-placed a basic for a human; Naya Soulbeast entered 0/0. Known gaps: From the Ashes with exactly one basic left gives it to a human without asking; AI-controlled Magus/Arena rarely activate (AI declines to tap own creature); live human click path of the opponent-chosen-target prompt unverified (rendered in VisualHarness only); Mystic Barrier goad/must-attack validators and AI attack planning ignore the direction restriction; War Cadence: human blocker payment prompt not verified, unaffordable tax still drops last blocker for humans; Crater Hellion self-damage, Eternal Dragon opponent-upkeep restriction and Marath X=0 not scenario-provable (unit-tested); #9125 still open for ~20 non-deck cards; Gate 5 run totals showed 2 failed effects attributed to no deck."
     },
     "Nature's Vengeance [C18] [2018]": {
       "score": 4,
@@ -1784,27 +1910,41 @@
       "updated": "2026-06-13"
     },
     "Rebellion Rising [ONC] [2023]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-24",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261127,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.6046511627906976,
+        "cardsCovered": 37,
+        "cardsTotal": 80,
+        "effectsVerified": 402,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 10/10 2026-11-24 (Gates 1/1.5/1.5b/2/3/4/5 PASS). 57 of 78 non-basic cards already in certified decks (skipped per multi-deck rule); 22 new cards audited (incl. commander Neyali): 78 scenarios in tools/differential-scenarios/rebellion-rising (38 batch A + 40 batch B; pos+neg per ability, 38 real Forge differentials against pinned Forge, rest spell_stack_only with code-absence reasons; 169 executed wrong-value mutants all FAIL). Real bugs fixed: Neyali trigger fired on planeswalker attacks and once per attack instead of once per defending player (new PerAttackedDefender flag, 29 cards) and her exiled card was playable on any turn (attackedWithThisTurn condition; Robber of the Rich, Rahilda, Goblin Researcher too); Prava anthem ignored tokens-only/nontoken/counter qualifiers; granted stacking keywords (melee etc.) did not stack (CR 702.3b); Otharri graveyard return tapped an arbitrary Rebel (human picker added); Roar of Resistance pumped the wrong side; Glimmer Lens drew when attacking alone; Hexplate Wallbreaker untapped and added combats every time (first-combat condition unmapped, 7 cards); Goldwardens' Gambit never attached Equipment and attached Equipment gave no stats; Kratos God of War count matcher (separate fix). Bundle v20261124.181231 (43 canonicals changed + Sets/SLD/SLD_2207, ground truth clean, 0 reversions). Gate 2: 12 incidental issue mentions reworded; #10216 Court of Grace closed after execution evidence (not reproducible; matches pre-Nov-2 canonical). Gate 5: 30 games seed 20261125, fillers Ahoy Mateys/Veloci-Ramp-Tor/Exquisite Invention, 0 invariant breaches, 0 effects failed for this deck. Known gaps: Zurgo Thunder's Decree has the same tokens-only gap in the granted-static path; Blast-Furnace Hellkite canonical gives double strike to all creatures (Offering unsupported); 14 ForgeMapperTests fail on clean baseline (pre-existing)."
     },
     "Revenant Recon [MKC] [2024]": {
-      "score": 8,
-      "tier": "recert-needed",
-      "updated": "2026-08-26",
-      "notes": "DEMOTED 2026-08-11 (GH #7102 fallout, found while verifying GH #7258's blast radius). Gate 3 was not clean: TWO of this deck's scenarios hard-failed with UNCONSUMED_SCRIPTED_CHOICE — discovery.1 (scripted 'surveil_choice' at 'surveil_index[0..1]') and unshakable_tail.1 (scripted 'surveil' at 'surveil[0]'). Root cause is that surveil has NO scripted channel at all: SpellStackAdapter.cs:2755 unconditionally calls AutoCompleteSurveil, resolved by AIDecisionService.ShouldKeepOnTop, so BOTH key spellings are unread. They were silently ignored at cert time on 2026-07-02 and both scenarios passed vacuously; GH #7102's unconsumed-choice ledger later converted that silence into a loud adapter error, which is the guard working as designed rather than a new bug. This is re-certification trigger #4 (a shared change invalidating a snapshot without naming any of the deck's cards). Both scenarios have now been re-authored to force the AI heuristic through board shaping the way witherbloom-pestilence/umbral_collar_zealot.1 does, rather than scripting an unreadable choice: discovery.1 gives P1 5 lands so ShouldKeepOnTop's land branch bins unconditionally and both surveilled lands go to the graveyard (graveyard_size_delta 3, library_size_delta -3); unshakable_tail.1 gives 3 lands and keeps a card in hand so the non-land branch's three keep-conditions all miss for a mana-value-6 creature, which is binned and fires the card's investigate trigger for a Clue token (graveyard_size_delta 1, library_size_delta -1, battlefield_size_delta 2, battlefield_cards Clue). Both now PASS and all 7 wrong-value-must-FAIL mutations were executed and each FAILs. Both carry spell_stack_only:true (NOT paired with forge_runner_gap) because Forge's surveil AI legitimately chooses differently — it keeps the cards on top where SpellStack bins them, and surveil puts 'any number' into the graveyard per CR 701.42a, so neither engine is wrong and Forge runs the scenario fine. Also found: unshakable_tail.1 previously gave only 2 lands for a {2}{B} card, so it could not pay its own cost. Gate 3 WAS re-run at review over the whole deck dir (review-7243): 160 pass / 1 fail / 22 skip. The single remaining failure is overseer_of_the_damned.3 (battlefield[Zombie Token] forge=present spellstack=missing), which is pre-existing — it also fails at 6beab1475, so it predates both this change and #7291 — and is already tracked in #7304's unshielded-blocked-combat table and noted in #7302. NOT fixed here and required before re-certification: (a) that one failure; (b) no other gate was re-checked, so the score of 8 reflects a known-bad Gate 3 rather than a fresh five-gate assessment; (c) hand_cards under expected: is still INERT on master (#7291's fix is unmerged), so discovery.1 deliberately asserts only size deltas — add the by-name draw assertion once that lands. (d) FORECAST, not yet true: once #7291 merges (it binds hand_cards/graveyard_cards, currently inert), four MORE of this deck's scenarios fail — case_of_the_shifting_visage.1, master_of_death.1 and watcher_of_hours.1 each assert a card that is nowhere in the scenario, and lazav_the_multifarious.1 asserts a Forge-AI surveil decision neither engine makes; all four are enumerated in #7302 and are author-side scenario defects, not engine bugs. Do not restore this deck to 10 without resolving those as well. ADDENDUM 2026-08-26: choked_estuary.1/.2 carried the same wrong-template bug as GH #7828 (Divine Convocation Furycalm Snarl) — a play_land+activate_ability combo scenario with no Island/Swamp in hand, masked into a vacuous pass by the SpellStackAdapter untap-cheat GH #7828 fixed. Found while certifying Cavalry Charge [MOC] [2023] (same reprint-dedup source). Replaced with the correct doom_prevails_msc_2026 template (single-action positive/negative reveal-condition pair + separate mana-ability scenario); re-verified passing.",
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-09",
+      "notes": "CERTIFIED 10/10 2026-11-09 via the full 5-gate re-certification (docs/guides/DECK_CERTIFICATION.md), recovering from the 2026-08-11 demotion (surveil scenarios that scripted an unread choice key). Gate 0: 88 card lines, 82 unique non-basics, scenario-dir slugs match the .dck exactly. Gate 1/4: coverage-audit --deck revenant-recon 82 cards audited, 0 with gaps (table and json, exit 0). The audit tool was fixed for exile/graveyard-zone triggers (Watcher of Hours) and other-card activations. Gate 1.5: RevenantReconDeckSmokeTests 83/83, 0 NotExecuted. Gate 1.5b: 17 complexity-flagged canonicals; the 9 not certified elsewhere (Mirko, Case of the Shifting Visage, Counterpoint, Discovery // Dispersal, Eye of Duskmantle, Foreboding Steamboat, Master of Death, Mission Briefing, Necromancy) read against fetched oracle text and exercised by asserted scenarios. Gate 2: issue list --limit 5000. Every deck-card hit was fixed or verified stale, and the cert commit closes #8402, #10064, #10120, #10121. Mixed-scope issues were split or reworded per precedent: #7302 Group A, #9940, #9052, #1075, #1079, #8088 and #8399 closed. Gate 3: revenant-recon deck dir 207/207 PASS (--scenario-dir, Release), no forge_runner_gap without spell_stack_only assertions. Every rewritten file was mutation-checked (all wrong-value mutants FAIL). The 48 cards certified in other decks pass their own certified-deck scenarios (102/103; eternal-might vizier.2 fixed). Gate 5: 30 games, seed 14600, with Blame Game, Deadly Disguise and Deep Clue Sea: 30/30 completed, 0 errored, 0 invariant breaches, 0 regressions. The first run's 2 regressions were verifier false positives, fixed: clash breadcrumb, Charnel Serenade allowlisted with proof. Engine/mapper fixes: copy_permanent mana-value-equals-X target binding (Lazav), suspend tick fires exiled-card CounterRemoved triggers (Watcher of Hours), self target-conditional cost reductions applied before payment and in the AI preview (Price of Fame, Ephara's Dispersal), self-exile-from-stack survives a surveil suspension (Charnel Serenade), resolving spell held off the graveyard while instructions remain, convoke not offered when lands cover the cost, graveyard free-cast gate, addTypes stamped on target (Necromancy), graveyard-exile cost precheck, surveilledThisTurn (Eye of Duskmantle), opponentEndStepOnly flash (Final-Word Phantom), nonLegendary spell-cast trigger filter (Case of the Shifting Visage), raw CARDNAME in synthesised trigger text (Necromancy), AI flashback payment planner (Deep Analysis), clash verifier breadcrumb (Marvo).",
       "headless": {
-        "lastRun": "2026-07-03",
+        "lastRun": "2026-11-09",
         "masterSeed": 14600,
         "games": 30,
         "saturated": false,
-        "bucketCoverage": 0.5074626865671642,
-        "cardsCovered": 26,
-        "cardsTotal": 82,
-        "effectsVerified": 659,
-        "effectsFailed": 10,
+        "bucketCoverage": 0.5413533834586466,
+        "cardsCovered": 31,
+        "cardsTotal": 84,
+        "effectsVerified": 590,
+        "effectsFailed": 0,
         "invariantBreaches": 0,
-        "regressions": 1
+        "regressions": 0
       }
     },
     "Riders of Rohan [LTC] [2023]": {
@@ -1959,9 +2099,23 @@
       "updated": "2026-06-13"
     },
     "Urza's Iron Alliance [BRC] [2022]": {
-      "score": 4,
-      "tier": "not-audited",
-      "updated": "2026-06-13"
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-25",
+      "headless": {
+        "lastRun": "2026-11-25",
+        "masterSeed": 20261201,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5694444444444444,
+        "cardsCovered": 39,
+        "cardsTotal": 92,
+        "effectsVerified": 475,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 10/10 2026-11-25 (Gates 1/1.5/1.5b/2/3/4/5 PASS). 67 of 89 non-basic cards already in certified decks (skipped per multi-deck rule); 22 new cards audited: 110 scenarios (pos+neg per ability, wrong-value mutants fail), commander Urza covered by scenarios incl. affinity through the real command-zone cast + end-step behavioral smoke test. Gate 1.5b: 5 flagged cards (Armix, Chrome Courier, Kayla's Music Box, Sanwell, Urza) PASS via executed mutants. Gate 5: 30 games seed 20261201 (fillers Nature of the Beast, Chaos Incarnate, Mirror Mastery), 0 invariant breaches, 0 effects failed for this deck. The 4 pre-existing scenario failures in already-certified decks (cranial_plating.1, temple_of_deceit.2 x2, spire_of_industry.2) were fixed. Bugs fixed: Chrome Courier mandatory dig never published rememberedCards (3-life gate always failed) and converted at Severity Error; Wreck Hunter requested no target and counted the whole graveyard (GH #9812); Wire Surgeons encore grant was a battlefield anthem (now graveyard grant; also Sliver Gravemother, Graywater's Fixer); Sanwell damage prevention was unconditional (now only while an artifact creature you control attacks, GH #7440 predicate) and could cast any exiled card; March of Progress overload copied every permanent; Tawnos with zero targets skipped its mill; harness had no scripted discard on declare_attackers (Armix). Known gaps: Temple scry AI-picked (not scriptable); trigger-target scenarios spell_stack_only (Forge adapter has no scripted trigger-choice reader); Gate 5 run totals show unattributed failed effects that were Curse of Chaos auto-check false positives (GH #10263/#10265)."
     },
     "Vampiric Bloodline [VOC] [2021]": {
       "score": 4,
@@ -2148,6 +2302,82 @@
         "cardsCovered": 34,
         "cardsTotal": 68,
         "effectsVerified": 473,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
+    },
+    "Federation Fleet [TRC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-12",
+      "notes": "CERTIFIED 2026-11-12: all 5 gates PASS (Gates 1-4 incl. 1.5/1.5b, Gate 2 clear, Gate 5 30 games clean seed 20261201). Evidence: tools/differential-scenarios/federation-fleet-trc-2026/CERT_EVIDENCE.md.",
+      "headless": {
+        "lastRun": "2026-11-13",
+        "masterSeed": 20261202,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.6159420289855072,
+        "cardsCovered": 39,
+        "cardsTotal": 90,
+        "effectsVerified": 659,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
+    },
+    "Klingon Fury [TRC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-13",
+      "headless": {
+        "lastRun": "2026-11-13",
+        "masterSeed": 20261202,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5572519083969466,
+        "cardsCovered": 33,
+        "cardsTotal": 88,
+        "effectsVerified": 486,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      },
+      "notes": "CERTIFIED 2026-11-13: all 5 gates PASS (Gates 1-4 incl. 1.5/1.5b, Gate 2 clear, Gate 5 30 games clean seed 20261202). Evidence: tools/differential-scenarios/klingon-fury-trc-2026/CERT_EVIDENCE.md."
+    },
+    "Landing Party [TRC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-15",
+      "notes": "CERTIFIED 2026-11-15: Gates 1/1.5/1.5b/3/4/5 PASS; Gate 2 open perf issue #10188 (names Scute Swarm) accepted by the owner. Gate 5: 30 games seed 20261208 (fillers Klingon Fury, Federation Fleet, Wakanda Forever), 0 errored / 0 invariant breaches / 0 failed effects / 0 regressions. Seed 20261207 (inside the 20261203 group) is excluded: a Scute Swarm blow-up board (~3,600-7,300 tokens) still takes >30 s per turn there (GH #10188). Evidence: tools/differential-scenarios/landing-party-trc-2026/CERT_EVIDENCE.md.",
+      "headless": {
+        "lastRun": "2026-11-15",
+        "masterSeed": 20261208,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.5347222222222222,
+        "cardsCovered": 37,
+        "cardsTotal": 95,
+        "effectsVerified": 693,
+        "effectsFailed": 0,
+        "invariantBreaches": 0,
+        "regressions": 0
+      }
+    },
+    "We Are the Borg [TRC] [2026]": {
+      "score": 10,
+      "tier": "certified",
+      "updated": "2026-11-15",
+      "notes": "CERTIFIED 2026-11-15: Gates 1/1.5/1.5b/2/3/4/5 PASS. 38 of 91 cards new to certification (rest pass-checked in certified decks). Gate 1: 39 cards, 0 gaps; 177 spell_stack_only scenarios, every one mutant-checked. Gate 1.5: 40/40 smoke. Gate 2: #10150 closed (fixed), #9889 Spire of Industry auto-tap gate was a real bug, fixed (8dbb4eb57) together with a wider bug (non-spell auto-tap never charged tap-life); #10152/#10154 deck-card mentions verified fixed and reworded; board-dump-only mentions (#10180, #10137-#10139, #10111) not blockers. Gate 3: 177/177 on the final build, 0 forge_runner_gap. Gate 5: 30 games seed 20261208 (fillers Klingon Fury, Federation Fleet, Wakanda Forever), 0 errored/0 breaches/0 failed effects/0 regressions. Blast radius of the life-payment change: 405 pain/pay-life-land scenarios identical pre vs post; Federation Fleet 221, Klingon Fury 200, Landing Party 159 scenarios all pass. Evidence: tools/differential-scenarios/we-are-the-borg-trc-2026/CERT_EVIDENCE.md.",
+      "headless": {
+        "lastRun": "2026-11-15",
+        "masterSeed": 20261208,
+        "games": 30,
+        "saturated": false,
+        "bucketCoverage": 0.648,
+        "cardsCovered": 48,
+        "cardsTotal": 91,
+        "effectsVerified": 454,
         "effectsFailed": 0,
         "invariantBreaches": 0,
         "regressions": 0
